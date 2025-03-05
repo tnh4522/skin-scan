@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
+import * as faceapi from 'face-api.js';
 
 function Home({ activeSection }) {
     const [mediaStream, setMediaStream] = useState(null);
-    const [imageSrc, setImageSrc] = useState(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const videoRef = useRef(null);
+    const canvasRef = useRef(null);
 
-    // Khởi tạo video stream khi mediaStream thay đổi
     useEffect(() => {
         if (videoRef.current && mediaStream) {
             videoRef.current.srcObject = mediaStream;
@@ -14,7 +14,6 @@ function Home({ activeSection }) {
         }
     }, [mediaStream]);
 
-    // Dọn dẹp khi component unmount hoặc section thay đổi
     useEffect(() => {
         return () => {
             if (mediaStream) {
@@ -23,12 +22,24 @@ function Home({ activeSection }) {
         };
     }, [mediaStream]);
 
-    // Dừng camera khi chuyển section
     useEffect(() => {
         if (activeSection !== 'home' && mediaStream) {
             stopCamera();
         }
     }, [activeSection, mediaStream]);
+
+    useEffect(() => {
+        const loadModels = async () => {
+            await Promise.all([
+                faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
+                faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
+                faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
+                faceapi.nets.faceExpressionNet.loadFromUri('/models'),
+            ]);
+            console.log('Models loaded');
+        };
+        loadModels();
+    }, []);
 
     const startCamera = async () => {
         try {
@@ -37,9 +48,15 @@ function Home({ activeSection }) {
             });
             setMediaStream(stream);
             setIsCameraOpen(true);
+
+            if (videoRef.current) {
+                videoRef.current.onloadedmetadata = () => {
+                    detectFaces(); // Start detection after metadata is loaded
+                };
+            }
         } catch (error) {
-            console.error('Lỗi truy cập camera:', error);
-            alert('Vui lòng cho phép quyền truy cập camera để tiếp tục');
+            console.error('Error accessing camera:', error);
+            alert('Please allow camera access to proceed.');
         }
     };
 
@@ -51,20 +68,38 @@ function Home({ activeSection }) {
         }
     };
 
-    const capturePhoto = () => {
-        const video = videoRef.current;
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-        const photoDataUrl = canvas.toDataURL('image/png');
-        setImageSrc(photoDataUrl);
-        stopCamera();
-    };
+    const detectFaces = async () => {
+        if (!videoRef.current || !canvasRef.current) return;
 
-    const retakePhoto = () => {
-        setImageSrc(null);
-        startCamera();
+        // Set canvas dimensions
+        canvasRef.current.width = videoRef.current.videoWidth;
+        canvasRef.current.height = videoRef.current.videoHeight;
+
+        const displaySize = {
+            width: videoRef.current.videoWidth,
+            height: videoRef.current.videoHeight
+        };
+
+        if (displaySize.width === 0 || displaySize.height === 0) {
+            console.error('Invalid video dimensions:', displaySize);
+            return;
+        }
+
+        faceapi.matchDimensions(canvasRef.current, displaySize);
+
+        setInterval(async () => {
+            const detections = await faceapi.detectAllFaces(
+                videoRef.current,
+                new faceapi.TinyFaceDetectorOptions()
+            ).withFaceLandmarks().withFaceExpressions();
+
+            const resizedDetections = faceapi.resizeResults(detections, displaySize);
+
+            canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+            faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
+            faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
+            faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
+        }, 100);
     };
 
     return (
@@ -75,57 +110,24 @@ function Home({ activeSection }) {
                 </h1>
                 <p className="text-gray-600 mb-8">Ứng dụng công nghệ AI phân tích da hàng đầu</p>
 
-                <div className="max-w-2xl mx-auto">
-                    {imageSrc ? (
-                        <img
-                            src={imageSrc}
-                            alt="Kết quả chụp"
-                            className="rounded-xl shadow-lg border-4 border-white"
-                        />
-                    ) : mediaStream ? (
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            className="rounded-xl shadow-lg border-4 border-white w-full h-auto"
-                        />
-                    ) : (
-                        <img
-                            src="https://storage.googleapis.com/a1aa/image/-3JQEEOZB1p0JxOU_cJmL7S-p5Iube5WVuO_OgescsA.jpg"
-                            alt="Hướng dẫn soi da"
-                            className="rounded-xl shadow-lg border-4 border-white"
-                        />
-                    )}
+                <div className="relative max-w-2xl mx-auto">
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="rounded-xl shadow-lg border-4 border-white w-full h-auto"
+                    />
+                    <canvas ref={canvasRef} className="absolute top-0 left-0" />
                 </div>
 
                 <div className="mt-8 flex justify-center gap-4">
-                    {imageSrc ? (
-                        <button
-                            onClick={retakePhoto}
-                            className="bg-blue-500 hover:bg-blue-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
-                        >
-                            <i className="fas fa-sync-alt mr-3"></i>CHỤP LẠI
+                    {isCameraOpen ? (
+                        <button onClick={stopCamera} className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105">
+                            <i className="fas fa-times mr-3"></i>HỦY BỎ
                         </button>
-                    ) : isCameraOpen ? (
-                        <>
-                            <button
-                                onClick={capturePhoto}
-                                className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
-                            >
-                                <i className="fas fa-camera mr-3"></i>CHỤP ẢNH
-                            </button>
-                            <button
-                                onClick={stopCamera}
-                                className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
-                            >
-                                <i className="fas fa-times mr-3"></i>HỦY BỎ
-                            </button>
-                        </>
                     ) : (
-                        <button
-                            onClick={startCamera}
-                            className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
-                        >
+                        <button onClick={startCamera} className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105">
                             <i className="fas fa-camera mr-3"></i>BẮT ĐẦU SOI DA
                         </button>
                     )}
