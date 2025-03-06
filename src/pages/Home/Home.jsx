@@ -51,7 +51,7 @@ function Home({ activeSection }) {
 
             if (videoRef.current) {
                 videoRef.current.onloadedmetadata = () => {
-                    detectFaces(); // Start detection after metadata is loaded
+                    detectFaces(); // Bắt đầu dò khuôn mặt sau khi video load xong
                 };
             }
         } catch (error) {
@@ -71,7 +71,7 @@ function Home({ activeSection }) {
     const detectFaces = async () => {
         if (!videoRef.current || !canvasRef.current) return;
 
-        // Set canvas dimensions
+        // Cài đặt kích thước canvas
         canvasRef.current.width = videoRef.current.videoWidth;
         canvasRef.current.height = videoRef.current.videoHeight;
 
@@ -95,15 +95,57 @@ function Home({ activeSection }) {
 
             const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-            canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+            const context = canvasRef.current.getContext('2d');
+            context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
             faceapi.draw.drawDetections(canvasRef.current, resizedDetections);
             faceapi.draw.drawFaceLandmarks(canvasRef.current, resizedDetections);
             faceapi.draw.drawFaceExpressions(canvasRef.current, resizedDetections);
         }, 100);
     };
 
+    // Tạo hàm chụp ảnh
+    const takePhoto = async () => {
+        if (!videoRef.current) return;
+
+        // Tạo một canvas tạm
+        const canvas = document.createElement('canvas');
+        canvas.width = videoRef.current.videoWidth;
+        canvas.height = videoRef.current.videoHeight;
+        const ctx = canvas.getContext('2d');
+
+        // Vẽ hình ảnh từ video
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+
+        // Chuyển sang dạng base64
+        const dataUrl = canvas.toDataURL('image/png'); // "image/jpeg" cũng được
+
+        try {
+            // Gửi dữ liệu ảnh lên server
+            const response = await fetch('http://127.0.0.1:8000/api/upload/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ dataUrl })
+            });
+
+            if (!response.ok) {
+                throw new Error('Không thể tải ảnh lên server');
+            }
+
+            const result = await response.json();
+            console.log(result.message); // "image saved!" (nếu server trả về)
+        } catch (error) {
+            console.error('Lỗi khi tải ảnh lên:', error);
+        }
+    };
+
     return (
-        <section id="home" className={`fade-in container mx-auto px-4 ${activeSection === 'home' ? 'block' : 'hidden'}`}>
+        <section
+            id="home"
+            className={`fade-in container mx-auto px-4 ${activeSection === 'home' ? 'block' : 'hidden'}`}
+        >
             <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-blue-900 mb-2">
                     SOI DA ONLINE AI
@@ -123,11 +165,25 @@ function Home({ activeSection }) {
 
                 <div className="mt-8 flex justify-center gap-4">
                     {isCameraOpen ? (
-                        <button onClick={stopCamera} className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105">
-                            <i className="fas fa-times mr-3"></i>HỦY BỎ
-                        </button>
+                        <>
+                            <button
+                                onClick={stopCamera}
+                                className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
+                            >
+                                <i className="fas fa-times mr-3"></i>HỦY BỎ
+                            </button>
+                            <button
+                                onClick={takePhoto}
+                                className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
+                            >
+                                <i className="fas fa-camera mr-3"></i>CHỤP ẢNH
+                            </button>
+                        </>
                     ) : (
-                        <button onClick={startCamera} className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105">
+                        <button
+                            onClick={startCamera}
+                            className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
+                        >
                             <i className="fas fa-camera mr-3"></i>BẮT ĐẦU SOI DA
                         </button>
                     )}
