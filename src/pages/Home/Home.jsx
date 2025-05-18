@@ -3,8 +3,9 @@ import * as faceapi from 'face-api.js';
 
 /**
  * Home component – allows the user to enter age & gender, then start an AI‑powered skin scan.
+ * Modified version with vertical camera frame.
  */
-function Home({ activeSection }) {
+function Home({ activeSection, setActiveSection }) {
     /* ------------------------------------------------------------------
      *  State & references
      * ----------------------------------------------------------------*/
@@ -14,8 +15,12 @@ function Home({ activeSection }) {
     const [age, setAge] = useState('');           // User‑supplied age
     const [gender, setGender] = useState('');     // "male" | "female" | "other"
 
+    // Add state for camera dimensions
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const videoContainerRef = useRef(null);
 
     /* ------------------------------------------------------------------
      *  Helpers
@@ -45,6 +50,36 @@ function Home({ activeSection }) {
     }, [activeSection, mediaStream]);
 
     /* ------------------------------------------------------------------
+     *  Set up vertical camera dimensions on stream start
+     * ----------------------------------------------------------------*/
+    useEffect(() => {
+        if (videoRef.current && mediaStream) {
+            const handleVideoMetadata = () => {
+                const videoWidth = videoRef.current.videoWidth;
+                const videoHeight = videoRef.current.videoHeight;
+
+                // Force portrait mode (vertical) dimensions
+                // We'll use a 3:4 aspect ratio for portrait mode
+                const containerWidth = videoContainerRef.current.clientWidth;
+                const targetHeight = containerWidth * (4/3);
+
+                setDimensions({
+                    width: containerWidth,
+                    height: targetHeight
+                });
+            };
+
+            videoRef.current.addEventListener('loadedmetadata', handleVideoMetadata);
+
+            return () => {
+                if (videoRef.current) {
+                    videoRef.current.removeEventListener('loadedmetadata', handleVideoMetadata);
+                }
+            };
+        }
+    }, [mediaStream]);
+
+    /* ------------------------------------------------------------------
      *  Load face‑api models once on mount
      * ----------------------------------------------------------------*/
     useEffect(() => {
@@ -69,9 +104,22 @@ function Home({ activeSection }) {
             return;
         }
         try {
+            // Attempt to request portrait orientation for mobile devices
+            if (window.screen && window.screen.orientation) {
+                try {
+                    await window.screen.orientation.lock('portrait');
+                } catch (orientationError) {
+                    console.log('Orientation lock not supported or denied');
+                }
+            }
+
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: 'user' }
+                video: {
+                    facingMode: 'user',
+                    aspectRatio: { ideal: 0.75 } // 3:4 aspect ratio (portrait)
+                }
             });
+
             setMediaStream(stream);
             setIsCameraOpen(true);
 
@@ -89,6 +137,11 @@ function Home({ activeSection }) {
             mediaStream.getTracks().forEach(track => track.stop());
             setMediaStream(null);
             setIsCameraOpen(false);
+
+            // Release orientation lock if it was set
+            if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
+                window.screen.orientation.unlock();
+            }
         }
     };
 
@@ -98,6 +151,7 @@ function Home({ activeSection }) {
     const detectFaces = async () => {
         if (!videoRef.current || !canvasRef.current) return;
 
+        // Set canvas dimensions to match the video
         canvasRef.current.width  = videoRef.current.videoWidth;
         canvasRef.current.height = videoRef.current.videoHeight;
 
@@ -115,7 +169,7 @@ function Home({ activeSection }) {
                 .withFaceExpressions();
 
             const resized = faceapi.resizeResults(detections, displaySize);
-            const ctx      = canvasRef.current.getContext('2d');
+            const ctx = canvasRef.current.getContext('2d');
             ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
             faceapi.draw.drawDetections(canvasRef.current, resized);
             faceapi.draw.drawFaceLandmarks(canvasRef.current, resized);
@@ -148,6 +202,9 @@ function Home({ activeSection }) {
             const result = await response.json();
             console.log(result.message);
             stopCamera();
+            if(result.status === 200) {
+                setActiveSection('analysis');
+            }
         } catch (error) {
             console.error('Lỗi khi tải ảnh lên:', error);
         }
@@ -195,19 +252,54 @@ function Home({ activeSection }) {
                 )}
 
                 {/* ---------------- Camera preview ---------------- */}
-                <div className="relative max-w-2xl mx-auto" style={{ display: userInfoComplete ? 'block' : 'none' }}>
-                    <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        muted
-                        className="rounded-xl shadow-lg border-4 border-white w-full h-auto"
-                    />
-                    <canvas ref={canvasRef} className="absolute top-0 left-0" style={{ display: 'none' }} />
+                <div
+                    ref={videoContainerRef}
+                    className="relative max-w-sm mx-auto"
+                    style={{
+                        display: userInfoComplete ? 'block' : 'none',
+                        maxHeight: '80vh',
+                        overflow: 'hidden',
+                        backgroundImage: "url('http://localhost:8000/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat',
+                    }}
+                >
+                    <div className="vertical-camera-container">
+                        <video
+                            ref={videoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            className="rounded-xl shadow-lg border-4 border-white"
+                            style={{
+                                width: dimensions.width > 0 ? dimensions.width : '100%',
+                                height: dimensions.height > 0 ? dimensions.height : 'auto',
+                                objectFit: 'cover',
+                                objectPosition: 'center'
+                            }}
+                        />
+                        <canvas
+                            ref={canvasRef}
+                            className="absolute top-0 left-0 w-full h-full"
+                            style={{ display: isCameraOpen ? 'block' : 'none' }}
+                        />
+                    </div>
+
+                    {/* Face detection guide overlay */}
+                    <div
+                        className="absolute inset-0 pointer-events-none flex items-center justify-center"
+                        style={{ display: isCameraOpen ? 'flex' : 'none' }}
+                    >
+                        <div
+                            className="border-2 border-dashed border-white rounded-full w-3/4 h-3/5 opacity-50"
+                            style={{ boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.3)' }}
+                        />
+                    </div>
                 </div>
 
                 {/* ---------------- Action buttons ---------------- */}
-                <div className="mt-8 flex flex-wrap justify-center gap-4" style={{ display: userInfoComplete ? 'block' : 'none' }}>
+                <div className="mt-8 flex flex-wrap justify-center gap-4" style={{ display: userInfoComplete ? 'flex' : 'none' }}>
                     {isCameraOpen ? (
                         <>
                             <button
@@ -234,6 +326,22 @@ function Home({ activeSection }) {
                     )}
                 </div>
             </div>
+
+            {/* CSS for portrait mode */}
+            <style jsx>{`
+                .vertical-camera-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                }
+                
+                @media (max-width: 768px) {
+                    .vertical-camera-container video {
+                        max-height: 70vh;
+                    }
+                }
+            `}</style>
         </section>
     );
 }

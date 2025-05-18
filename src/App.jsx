@@ -12,9 +12,9 @@ function App() {
     return (
         <div className="bg-gray-100">
             <Navigation activeSection={activeSection} setActiveSection={setActiveSection} />
-            <Home activeSection={activeSection} />
+            <Home activeSection={activeSection} setActiveSection={setActiveSection} />
             <History activeSection={activeSection} />
-            <Analysis activeSection={activeSection} />
+            <Analysis activeSection={activeSection} setActiveSection={setActiveSection} />
             <Advice activeSection={activeSection} />
             <Footer />
         </div>

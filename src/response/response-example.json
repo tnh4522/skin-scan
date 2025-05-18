@@ -1,0 +1,168 @@
+{
+  "warning": ["imporper_headpose"],
+  "face_rectangle": {
+    "top": 120.5,
+    "left": 100.3,
+    "width": 230.0,
+    "height": 240.5
+  },
+  "result": {
+    "skin_color": {
+      "value": 2,
+      "confidence": 0.87
+    },
+    "skintone_ita": {
+      "ITA": 38.5,
+      "skintone": 2
+    },
+    "skin_hue_ha": {
+      "HA": 48.2,
+      "skintone": 1
+    },
+    "skin_age": {
+      "value": 28
+    },
+    "left_eyelids": {
+      "value": 1,
+      "confidence": 0.93
+    },
+    "right_eyelids": {
+      "value": 2,
+      "confidence": 0.89
+    },
+    "eye_pouch": {
+      "value": 1,
+      "confidence": 0.91
+    },
+    "eye_pouch_severity": {
+      "value": 1,
+      "confidence": 0.88
+    },
+    "dark_circle": {
+      "value": 2,
+      "confidence": 0.85
+    },
+    "forehead_wrinkle": {
+      "value": 1,
+      "confidence": 0.82
+    },
+    "crows_feet": {
+      "value": 1,
+      "confidence": 0.84
+    },
+    "eye_finelines": {
+      "value": 1,
+      "confidence": 0.80
+    },
+    "glabella_wrinkle": {
+      "value": 0,
+      "confidence": 0.90
+    },
+    "nasolabial_fold": {
+      "value": 1,
+      "confidence": 0.83
+    },
+    "nasolabial_fold_severity": {
+      "value": 2,
+      "confidence": 0.81
+    },
+    "skin_type": {
+      "skin_type": 3,
+      "details": {
+        "0": {
+          "value": 1,
+          "confidence": 0.76
+        },
+        "1": {
+          "value": 0,
+          "confidence": 0.60
+        },
+        "2": {
+          "value": 0,
+          "confidence": 0.50
+        },
+        "3": {
+          "value": 1,
+          "confidence": 0.80
+        }
+      }
+    },
+    "pores_forehead": {
+      "value": 1,
+      "confidence": 0.79
+    },
+    "pores_left_cheek": {
+      "value": 0,
+      "confidence": 0.90
+    },
+    "pores_right_cheek": {
+      "value": 1,
+      "confidence": 0.85
+    },
+    "pores_jaw": {
+      "value": 0,
+      "confidence": 0.88
+    },
+    "blackhead": {
+      "value": 2,
+      "confidence": 0.83
+    },
+    "acne": {
+      "rectangle": [
+        {
+          "width": 25.0,
+          "height": 25.0,
+          "left": 145.3,
+          "top": 160.2
+        },
+        {
+          "width": 18.0,
+          "height": 18.0,
+          "left": 200.5,
+          "top": 220.8
+        }
+      ],
+      "confidence": [0.78, 0.75]
+    },
+    "mole": {
+      "rectangle": [
+        {
+          "width": 12.0,
+          "height": 12.0,
+          "left": 180.0,
+          "top": 190.0
+        }
+      ],
+      "confidence": [0.91]
+    },
+    "closed_comedones": {
+      "rectangle": [
+        {
+          "width": 10.0,
+          "height": 10.0,
+          "left": 170.5,
+          "top": 195.2
+        }
+      ],
+      "confidence": [0.80]
+    },
+    "skin_spot": {
+      "rectangle": [
+        {
+          "width": 15.0,
+          "height": 15.0,
+          "left": 160.0,
+          "top": 180.0
+        }
+      ],
+      "confidence": [0.77]
+    },
+    "face_maps": {
+      "red_area": "/9j/4AAQSkZJRgABAQEAAAAAAAD..."
+    },
+    "sensitivity": {
+      "sensitivity_area": 0.35,
+      "sensitivity_intensity": 65.0
+    }
+  }
+}
