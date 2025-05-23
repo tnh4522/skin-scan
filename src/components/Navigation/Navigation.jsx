@@ -9,14 +9,13 @@ function Navigation({ activeSection, setActiveSection }) {
         <div className="container mx-auto px-4 py-2">
             <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center space-x-4">
-                    <i className="fas fa-home text-2xl text-blue-900"></i>
                     <nav className="flex space-x-6">
                         <a
                             href="#home"
                             className={`section-toggle ${activeSection === 'home' ? 'nav-active text-blue-900 font-medium' : 'text-gray-600 hover:text-blue-900'}`}
                             onClick={() => handleSectionChange('home')}
                         >
-                            Trang chủ
+                            <i className="fas fa-home text-2xl text-blue-900"></i>
                         </a>
                         <a
                             href="#history"

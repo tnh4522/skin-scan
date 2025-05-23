@@ -6,6 +6,9 @@ import "slick-carousel/slick/slick-theme.css";
 function Analysis({ activeSection, setActiveSection }) {
     const [skinData, setSkinData] = useState(null);
     const [loading, setLoading] = useState(true);
+    let imageFile = localStorage.getItem('upload');
+    imageFile = imageFile ? JSON.parse(imageFile) : null;
+    const imageUrl = imageFile ? 'http://localhost:8000/media/inputs/' + imageFile.uid : 'http://localhost:8000/media/uploads/1741780530.png';
 
     useEffect(() => {
         // In a real application, you would import the data or fetch it
@@ -331,60 +334,22 @@ function Analysis({ activeSection, setActiveSection }) {
 
     return (
         <section id="analysis" className={`fade-in container mx-auto px-4 py-8 ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
-            <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">PHÂN TÍCH CHI TIẾT</h2>
-
-            <div className="bg-blue-50 rounded-lg p-6 mb-8 text-center">
+            <div className="bg-blue-50 rounded-lg p-2 mb-2 text-center">
+                <img src={imageUrl} alt="Skin Analysis" className="w-1/2 mx-auto rounded-lg shadow-lg" />
                 <p className="text-2xl font-bold">Skin Aging:
                     <span className="text-red-600"> {agingResult.score}/10</span>
                     <span className="text-gray-600"> ({agingResult.status})</span>
                 </p>
 
-                {skinData?.warning && (
-                    <div className="mt-2 text-amber-600 text-sm">
-                        <p>Lưu ý: {skinData.warning.join(', ')}</p>
-                    </div>
-                )}
-
                 <div className="mt-4 flex flex-col lg:flex-row justify-center gap-4">
                     <div className="relative w-full max-w-md rounded-lg overflow-hidden mx-auto lg:mx-0">
-                        <Slider {...sliderSettings} className="skin-analysis-slider">
-                            {hasAcne && <AcneSlide skinData={skinData} />}
-                            {hasMoles && <MoleSlide skinData={skinData} />}
-                            {hasSpots && <SpotSlide skinData={skinData} />}
-                            <WrinkleSlide skinData={skinData} areaScores={areaScores} />
-                            <EyeIssuesSlide skinData={skinData} />
-                        </Slider>
-                    </div>
-
-                    {/* Legend */}
-                    <div className="bg-white p-4 rounded-lg shadow-lg">
-                        <h4 className="font-bold text-gray-700 mb-2">Chú thích</h4>
-                        <div className="grid grid-cols-2 gap-2">
-                            <div className="flex items-center">
-                                <div className="w-4 h-4 rounded-full bg-red-500 mr-2"></div>
-                                <span className="text-sm">Mụn (A)</span>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="w-4 h-4 rounded-full bg-yellow-800 mr-2"></div>
-                                <span className="text-sm">Nốt ruồi (M)</span>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="w-4 h-4 rounded-full bg-yellow-500 mr-2"></div>
-                                <span className="text-sm">Đốm nâu (S)</span>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="w-4 h-4 border-2 border-pink-400 mr-2"></div>
-                                <span className="text-sm">Nếp nhăn</span>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="w-4 h-4 border-2 border-purple-400 mr-2"></div>
-                                <span className="text-sm">Quầng thâm</span>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="w-4 h-4 border-2 border-blue-400 mr-2"></div>
-                                <span className="text-sm">Túi mắt</span>
-                            </div>
-                        </div>
+                        {/*<Slider {...sliderSettings} className="skin-analysis-slider">*/}
+                        {/*    {hasAcne && <AcneSlide skinData={skinData} />}*/}
+                        {/*    {hasMoles && <MoleSlide skinData={skinData} />}*/}
+                        {/*    {hasSpots && <SpotSlide skinData={skinData} />}*/}
+                        {/*    <WrinkleSlide skinData={skinData} areaScores={areaScores} />*/}
+                        {/*    <EyeIssuesSlide skinData={skinData} />*/}
+                        {/*</Slider>*/}
                     </div>
                 </div>
             </div>

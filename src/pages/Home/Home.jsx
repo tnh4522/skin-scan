@@ -11,6 +11,7 @@ function Home({ activeSection, setActiveSection }) {
      * ----------------------------------------------------------------*/
     const [mediaStream, setMediaStream] = useState(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [faceDetected, setFaceDetected] = useState(false);
 
     const [age, setAge] = useState('');           // User‑supplied age
     const [gender, setGender] = useState('');     // "male" | "female" | "other"
@@ -168,6 +169,8 @@ function Home({ activeSection, setActiveSection }) {
                 .withFaceLandmarks()
                 .withFaceExpressions();
 
+            setFaceDetected(detections.length > 0);
+
             const resized = faceapi.resizeResults(detections, displaySize);
             const ctx = canvasRef.current.getContext('2d');
             ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
@@ -191,17 +194,18 @@ function Home({ activeSection, setActiveSection }) {
         const dataUrl = tmp.toDataURL('image/png');
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/upload/', {
+            stopCamera();
+            const response = await fetch('http://localhost:8000/api/detect/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ dataUrl, age: parseInt(age, 10), gender })
+                body: JSON.stringify({ image_base64: dataUrl, age: parseInt(age, 10), gender })
             });
-
             if (!response.ok) throw new Error('Không thể tải ảnh lên server');
 
             const result = await response.json();
-            console.log(result.message);
-            stopCamera();
+
+            localStorage.setItem('upload', JSON.stringify(result));
+
             if(result.status === 200) {
                 setActiveSection('analysis');
             }
@@ -219,8 +223,8 @@ function Home({ activeSection, setActiveSection }) {
             className={`fade-in container mx-auto px-4 ${activeSection === 'home' ? 'block' : 'hidden'}`}
         >
             <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-blue-900 mb-2">SOI DA ONLINE AI</h1>
-                <p className="text-gray-600 mb-8">Ứng dụng công nghệ AI phân tích da hàng đầu</p>
+                <h1 className="text-4xl font-bold text-blue-900">SOI DA ONLINE AI</h1>
+                <p className="text-gray-600 mb-2">Ứng dụng công nghệ AI phân tích da hàng đầu</p>
 
                 {/* ---------------- User info form ---------------- */}
                 {(!isCameraOpen && !userInfoComplete) && (
@@ -279,27 +283,28 @@ function Home({ activeSection, setActiveSection }) {
                                 objectPosition: 'center'
                             }}
                         />
-                        <canvas
-                            ref={canvasRef}
-                            className="absolute top-0 left-0 w-full h-full"
-                            style={{ display: isCameraOpen ? 'block' : 'none' }}
-                        />
                     </div>
 
                     {/* Face detection guide overlay */}
                     <div
                         className="absolute inset-0 pointer-events-none flex items-center justify-center"
-                        style={{ display: isCameraOpen ? 'flex' : 'none' }}
+                        style={{display: isCameraOpen ? 'flex' : 'none'}}
                     >
                         <div
-                            className="border-2 border-dashed border-white rounded-full w-3/4 h-3/5 opacity-50"
-                            style={{ boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.3)' }}
+                            className={`rounded-full w-3/4 h-3/5 opacity-50 border-8 ${
+                                faceDetected ? 'border-green-500' : 'border-white border-dashed'
+                            }`}
+                            style={{
+                                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.3)',
+                                transition: 'border-color 0.3s ease-in-out',
+                            }}
                         />
                     </div>
                 </div>
 
                 {/* ---------------- Action buttons ---------------- */}
-                <div className="mt-8 flex flex-wrap justify-center gap-4" style={{ display: userInfoComplete ? 'flex' : 'none' }}>
+                <div className="mt-2 flex flex-wrap justify-center gap-4"
+                     style={{display: userInfoComplete ? 'flex' : 'none'}}>
                     {isCameraOpen ? (
                         <>
                             <button
