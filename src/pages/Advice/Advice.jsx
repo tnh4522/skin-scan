@@ -10,32 +10,31 @@ function Advice({ activeSection }) {
 
                 <div className="space-y-6">
                     <div className="bg-gray-50 rounded-lg p-6">
-                        <h3 className="text-xl font-semibold mb-4"> CHỐNG LÃO HÓA</h3>
+                        <h3 className="text-xl font-semibold mb-4">Nếp nhăn</h3>
                         <ul className="list-disc pl-6 space-y-2">
-                            <li>Sử dụng serum Vitamin C buổi sáng</li>
-                            <li>Dưỡng ẩm với Hyaluronic Acid</li>
-                            <li>Retinol 2-3 lần/tuần vào buổi tối</li>
-                            <li>Luôn dùng kem chống nắng SPF 50+</li>
+                            <li>Sử dụng serum retinoid hoặc peptide vào ban đêm để kích thích sản sinh collagen và giảm nếp nhăn.</li>
+                            <li>Thoa serum Vitamin C vào buổi sáng để bảo vệ da khỏi tác hại của gốc tự do và làm sáng da.</li>
+                            <li>Xem xét các liệu pháp như microdermabrasion hoặc laser nếu muốn kết quả rõ rệt hơn (tham khảo ý kiến bác sĩ da liễu).</li>
                         </ul>
                     </div>
 
                     <div className="bg-gray-50 rounded-lg p-6">
-                        <h3 className="text-xl font-semibold mb-4"> KIỂM SOÁT MỤN</h3>
+                        <h3 className="text-xl font-semibold mb-4">Độ sắc tố</h3>
                         <ul className="list-disc pl-6 space-y-2">
-                            <li>Rửa mặt 2 lần/ngày với sữa rửa mặt dịu nhẹ</li>
-                            <li>Sử dụng toner cân bằng pH</li>
-                            <li>Điều trị cục bộ với Benzoyl Peroxide</li>
-                            <li>Dưỡng ẩm không chứa dầu</li>
+                            <li>Tiếp tục duy trì quy trình chăm sóc da hiện tại vì nó đang hoạt động hiệu quả.</li>
+                            <li>Sử dụng kem chống nắng phổ rộng SPF 30+ hàng ngày để ngăn ngừa tổn thương do tia UV và duy trì độ đều màu của da.</li>
+                            <li>Thoa lại kem chống nắng sau mỗi 2 giờ nếu tiếp xúc trực tiếp với ánh nắng mặt trời.</li>
                         </ul>
                     </div>
 
                     <div className="bg-gray-50 rounded-lg p-6">
-                        <h3 className="text-xl font-semibold mb-4">✨ TRỊ THÂM NÁM</h3>
+                        <h3 className="text-xl font-semibold mb-4">Khô da</h3>
                         <ul className="list-disc pl-6 space-y-2">
-                            <li>Serum Vitamin C nồng độ cao</li>
-                            <li>Sản phẩm chứa Niacinamide</li>
-                            <li>Tẩy tế bào chết hóa học AHA/BHA</li>
-                            <li>Liệu pháp laser (nếu cần)</li>
+                            <li>Sử dụng sữa rửa mặt dịu nhẹ, cấp ẩm (tránh xà phòng mạnh).</li>
+                            <li>Thoa toner dưỡng ẩm để chuẩn bị da.</li>
+                            <li>Sử dụng serum chứa hyaluronic acid để cấp ẩm sâu.</li>
+                            <li>Khóa ẩm bằng kem dưỡng chứa ceramide.</li>
+                            <li>Đắp mặt nạ dưỡng ẩm 1 lần/tuần để tăng cường độ ẩm.</li>
                         </ul>
                     </div>
                 </div>

@@ -17,13 +17,13 @@ function Navigation({ activeSection, setActiveSection }) {
                         >
                             <i className="fas fa-home text-2xl text-blue-900"></i>
                         </a>
-                        <a
-                            href="#history"
-                            className={`section-toggle ${activeSection === 'history' ? 'nav-active text-blue-900 font-medium' : 'text-gray-600 hover:text-blue-900'}`}
-                            onClick={() => handleSectionChange('history')}
-                        >
-                            Lịch sử
-                        </a>
+                        {/*<a*/}
+                        {/*    href="#history"*/}
+                        {/*    className={`section-toggle ${activeSection === 'history' ? 'nav-active text-blue-900 font-medium' : 'text-gray-600 hover:text-blue-900'}`}*/}
+                        {/*    onClick={() => handleSectionChange('history')}*/}
+                        {/*>*/}
+                        {/*    Lịch sử*/}
+                        {/*</a>*/}
                         <a
                             href="#analysis"
                             className={`section-toggle ${activeSection === 'analysis' ? 'nav-active text-blue-900 font-medium' : 'text-gray-600 hover:text-blue-900'}`}

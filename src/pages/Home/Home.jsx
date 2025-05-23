@@ -3,7 +3,7 @@ import * as faceapi from 'face-api.js';
 
 /**
  * Home component – allows the user to enter age & gender, then start an AI‑powered skin scan.
- * Modified version with vertical camera frame.
+ * Modified version with vertical camera frame and photo upload functionality.
  */
 function Home({ activeSection, setActiveSection }) {
     /* ------------------------------------------------------------------
@@ -12,6 +12,8 @@ function Home({ activeSection, setActiveSection }) {
     const [mediaStream, setMediaStream] = useState(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [faceDetected, setFaceDetected] = useState(false);
+    const [uploadedImage, setUploadedImage] = useState(null);
+    const [isUploading, setIsUploading] = useState(false);
 
     const [age, setAge] = useState('');           // User‑supplied age
     const [gender, setGender] = useState('');     // "male" | "female" | "other"
@@ -22,6 +24,7 @@ function Home({ activeSection, setActiveSection }) {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const videoContainerRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     /* ------------------------------------------------------------------
      *  Helpers
@@ -105,6 +108,9 @@ function Home({ activeSection, setActiveSection }) {
             return;
         }
         try {
+            // Clear uploaded image when starting camera
+            setUploadedImage(null);
+
             // Attempt to request portrait orientation for mobile devices
             if (window.screen && window.screen.orientation) {
                 try {
@@ -181,6 +187,51 @@ function Home({ activeSection, setActiveSection }) {
     };
 
     /* ------------------------------------------------------------------
+     *  Photo upload handling
+     * ----------------------------------------------------------------*/
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Vui lòng chọn file ảnh hợp lệ (JPG, PNG, etc.)');
+                return;
+            }
+
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('Kích thước file quá lớn. Vui lòng chọn ảnh dưới 10MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setUploadedImage(e.target.result);
+                // Close camera if it's open
+                if (isCameraOpen) {
+                    stopCamera();
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const triggerFileUpload = () => {
+        if (!userInfoComplete) {
+            alert('Vui lòng nhập Độ tuổi & Giới tính trước khi tải ảnh lên.');
+            return;
+        }
+        fileInputRef.current?.click();
+    };
+
+    const removeUploadedImage = () => {
+        setUploadedImage(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    /* ------------------------------------------------------------------
      *  Capture photo & upload
      * ----------------------------------------------------------------*/
     const takePhoto = async () => {
@@ -195,6 +246,7 @@ function Home({ activeSection, setActiveSection }) {
 
         try {
             stopCamera();
+            setIsUploading(true);
             const response = await fetch('http://localhost:8000/api/detect/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -204,13 +256,46 @@ function Home({ activeSection, setActiveSection }) {
 
             const result = await response.json();
 
-            localStorage.setItem('upload', JSON.stringify(result));
-
+            // Use React state instead of localStorage
             if(result.status === 200) {
                 setActiveSection('analysis');
             }
         } catch (error) {
             console.error('Lỗi khi tải ảnh lên:', error);
+            alert('Có lỗi xảy ra khi phân tích ảnh. Vui lòng thử lại.');
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const uploadPhoto = async () => {
+        if (!uploadedImage) return;
+
+        try {
+            setIsUploading(true);
+            const response = await fetch('http://localhost:8000/api/detect/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    image_base64: uploadedImage,
+                    age: parseInt(age, 10),
+                    gender
+                })
+            });
+
+            if (!response.ok) throw new Error('Không thể tải ảnh lên server');
+
+            const result = await response.json();
+
+            if(result.status === 200) {
+                setActiveSection('analysis');
+                localStorage.setItem('analysisResult', JSON.stringify(result));
+            }
+        } catch (error) {
+            console.error('Lỗi khi tải ảnh lên:', error);
+            alert('Có lỗi xảy ra khi phân tích ảnh. Vui lòng thử lại.');
+        } finally {
+            setIsUploading(false);
         }
     };
 
@@ -223,11 +308,11 @@ function Home({ activeSection, setActiveSection }) {
             className={`fade-in container mx-auto px-4 ${activeSection === 'home' ? 'block' : 'hidden'}`}
         >
             <div className="text-center mb-8">
-                <h1 className="text-4xl font-bold text-blue-900">SOI DA ONLINE AI</h1>
+                <h1 className="text-3xl font-bold text-blue-900">CHẨN ĐOÁN DA LÃO HÓA</h1>
                 <p className="text-gray-600 mb-2">Ứng dụng công nghệ AI phân tích da hàng đầu</p>
 
                 {/* ---------------- User info form ---------------- */}
-                {(!isCameraOpen && !userInfoComplete) && (
+                {(!isCameraOpen && !userInfoComplete && !uploadedImage) && (
                     <div className="mb-8 max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
                         <h2 className="text-xl font-semibold mb-4 text-left">Thông tin người dùng</h2>
                         <label className="block text-left mb-2 font-medium">Độ tuổi</label>
@@ -251,7 +336,8 @@ function Home({ activeSection, setActiveSection }) {
                             <option value="female">Nữ</option>
                             <option value="other">Khác</option>
                         </select>
-                        <p className="text-sm text-gray-500 text-left">Thông tin này sẽ được sử dụng để cá nhân hoá kết quả phân tích.</p>
+                        <p className="text-sm text-gray-500 text-left">Thông tin này sẽ được sử dụng để cá nhân hoá kết
+                            quả phân tích.</p>
                     </div>
                 )}
 
@@ -260,7 +346,7 @@ function Home({ activeSection, setActiveSection }) {
                     ref={videoContainerRef}
                     className="relative max-w-sm mx-auto"
                     style={{
-                        display: userInfoComplete ? 'block' : 'none',
+                        display: userInfoComplete && !uploadedImage ? 'block' : 'none',
                         maxHeight: '80vh',
                         overflow: 'hidden',
                         backgroundImage: "url('http://localhost:8000/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png')",
@@ -283,6 +369,11 @@ function Home({ activeSection, setActiveSection }) {
                                 objectPosition: 'center'
                             }}
                         />
+                        <canvas
+                            ref={canvasRef}
+                            className="absolute top-0 left-0 w-full h-full"
+                            style={{display: 'none'}}
+                        />
                     </div>
 
                     {/* Face detection guide overlay */}
@@ -291,45 +382,133 @@ function Home({ activeSection, setActiveSection }) {
                         style={{display: isCameraOpen ? 'flex' : 'none'}}
                     >
                         <div
-                            className={`rounded-full w-3/4 h-3/5 opacity-50 border-8 ${
+                            className={`opacity-50 border-8 ${
                                 faceDetected ? 'border-green-500' : 'border-white border-dashed'
                             }`}
                             style={{
-                                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.3)',
-                                transition: 'border-color 0.3s ease-in-out',
+                                width: '60%',
+                                height: '60%',
+                                borderRadius: '50%',
                             }}
                         />
                     </div>
                 </div>
 
+                {/* ---------------- Uploaded image preview ---------------- */}
+                {uploadedImage && (
+                    <div className="relative max-w-sm mx-auto mb-4">
+                        <img
+                            src={uploadedImage}
+                            alt="Uploaded preview"
+                            className="w-full rounded-xl shadow-lg border-4 border-white"
+                            style={{
+                                maxHeight: '65vh',
+                                objectFit: 'contain'
+                            }}
+                        />
+                    </div>
+                )}
+
+                {/* ---------------- Hidden file input ---------------- */}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                />
+
                 {/* ---------------- Action buttons ---------------- */}
-                <div className="mt-2 flex flex-wrap justify-center gap-4"
+                <div className="mt-2 flex flex-wrap justify-center gap-4 action-buttons"
                      style={{display: userInfoComplete ? 'flex' : 'none'}}>
-                    {isCameraOpen ? (
+
+                    {/* Camera mode buttons */}
+                    {!uploadedImage && (
+                        <>
+                            {isCameraOpen ? (
+                                <>
+                                    <button
+                                        onClick={stopCamera}
+                                        disabled={isUploading}
+                                        className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <i className="fas fa-times mr-2"/>HỦY BỎ
+                                    </button>
+                                    <button
+                                        {...faceDetected ? {} : {disabled: true}}
+                                        onClick={takePhoto}
+                                        disabled={isUploading || !faceDetected}
+                                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <i className="fas fa-camera mr-2"/>
+                                        {isUploading ? 'ĐANG XỬ LÝ...' : 'CHỤP ẢNH'}
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        onClick={startCamera}
+                                        disabled={!userInfoComplete || isUploading}
+                                        className={`px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 text-white ${
+                                            userInfoComplete && !isUploading
+                                                ? 'bg-red-500 hover:bg-red-600'
+                                                : 'bg-red-300 cursor-not-allowed'
+                                        }`}
+                                    >
+                                        <i className="fas fa-camera mr-2"/>BẮT ĐẦU SOI DA
+                                    </button>
+                                    <button
+                                        onClick={triggerFileUpload}
+                                        disabled={!userInfoComplete || isUploading}
+                                        className={`px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 text-white ${
+                                            userInfoComplete && !isUploading
+                                                ? 'bg-blue-500 hover:bg-blue-600'
+                                                : 'bg-blue-300 cursor-not-allowed'
+                                        }`}
+                                    >
+                                        <i className="fas fa-upload mr-2"/>TẢI ẢNH LÊN
+                                    </button>
+                                </>
+                            )}
+                        </>
+                    )}
+
+                    {/* Upload mode buttons */}
+                    {uploadedImage && (
                         <>
                             <button
-                                onClick={stopCamera}
-                                className="bg-gray-500 hover:bg-gray-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
+                                onClick={removeUploadedImage}
+                                disabled={isUploading}
+                                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <i className="fas fa-times mr-3" />HỦY BỎ
+                                <i className="fas fa-times mr-2"/>HỦY BỎ
                             </button>
                             <button
-                                onClick={takePhoto}
-                                className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105"
+                                onClick={uploadPhoto}
+                                disabled={isUploading}
+                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <i className="fas fa-camera mr-3" />CHỤP ẢNH
+                                <i className="fas fa-search mr-2"/>
+                                {isUploading ? 'ĐANG PHÂN TÍCH...' : 'PHÂN TÍCH DA'}
+                            </button>
+                            <button
+                                onClick={triggerFileUpload}
+                                disabled={isUploading}
+                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <i className="fas fa-exchange-alt mr-2"/>ĐỔI ẢNH KHÁC
                             </button>
                         </>
-                    ) : (
-                        <button
-                            onClick={startCamera}
-                            className={`px-8 py-4 rounded-full text-lg font-bold transform transition-all hover:scale-105 text-white ${userInfoComplete ? 'bg-red-500 hover:bg-red-600' : 'bg-red-300 cursor-not-allowed'}`}
-                            disabled={!userInfoComplete}
-                        >
-                            <i className="fas fa-camera mr-3" />BẮT ĐẦU SOI DA
-                        </button>
                     )}
                 </div>
+
+                {/* Loading indicator */}
+                {isUploading && (
+                    <div className="mt-4 flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                        <span className="ml-2 text-blue-600">Đang xử lý ảnh...</span>
+                    </div>
+                )}
             </div>
 
             {/* CSS for portrait mode */}
@@ -340,10 +519,19 @@ function Home({ activeSection, setActiveSection }) {
                     align-items: center;
                     overflow: hidden;
                 }
-                
+
                 @media (max-width: 768px) {
                     .vertical-camera-container video {
                         max-height: 70vh;
+                    }
+
+                    .action-buttons {
+                        flex-wrap: wrap;
+                        gap: 8px;
+                    }
+
+                    .action-buttons button {
+                        min-width: 120px;
                     }
                 }
             `}</style>

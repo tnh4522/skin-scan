@@ -6,9 +6,9 @@ import "slick-carousel/slick/slick-theme.css";
 function Analysis({ activeSection, setActiveSection }) {
     const [skinData, setSkinData] = useState(null);
     const [loading, setLoading] = useState(true);
-    let imageFile = localStorage.getItem('upload');
+    let imageFile = localStorage.getItem('analysisResult');
     imageFile = imageFile ? JSON.parse(imageFile) : null;
-    const imageUrl = imageFile ? 'http://localhost:8000/media/inputs/' + imageFile.uid : 'http://localhost:8000/media/uploads/1741780530.png';
+    const imageUrl = imageFile ? 'http://localhost:8000/media/overlays/' + imageFile.uid : 'http://localhost:8000/media/uploads/1741780530.png';
 
     useEffect(() => {
         // In a real application, you would import the data or fetch it
@@ -335,10 +335,10 @@ function Analysis({ activeSection, setActiveSection }) {
     return (
         <section id="analysis" className={`fade-in container mx-auto px-4 py-8 ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
             <div className="bg-blue-50 rounded-lg p-2 mb-2 text-center">
-                <img src={imageUrl} alt="Skin Analysis" className="w-1/2 mx-auto rounded-lg shadow-lg" />
-                <p className="text-2xl font-bold">Skin Aging:
+                <img src={imageUrl} alt="Skin Analysis" className="w-full h-auto rounded-lg shadow-lg mb-4" />
+                <p className="text-2xl font-bold">Mức độ lão hóa da :
                     <span className="text-red-600"> {agingResult.score}/10</span>
-                    <span className="text-gray-600"> ({agingResult.status})</span>
+                    {/*<span className="text-gray-600"> ({agingResult.status})</span>*/}
                 </p>
 
                 <div className="mt-4 flex flex-col lg:flex-row justify-center gap-4">
@@ -356,11 +356,11 @@ function Analysis({ activeSection, setActiveSection }) {
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
                 <div className="bg-white rounded-lg p-6 shadow-lg border-t-4 border-blue-500">
-                    <h3 className="text-lg font-bold text-red-600 mb-4">Wrinkles ({areaScores.wrinkles}/10)</h3>
-                    <div className="relative h-2 bg-gray-200 rounded-full mb-4">
+                    <h3 className="text-lg font-bold text-red-600 mb-4">Nếp Nhăn ({areaScores.wrinkles}/10)</h3>
+                    <div className="relative h-2 w-full bg-gray-200 rounded-full mb-4">
                         <div
-                            className="absolute h-2 bg-gradient-to-r from-green-500 to-red-500 rounded-full"
-                            style={{ width: `${areaScores.wrinkles * 10}%` }}
+                            className="absolute top-0 left-0 h-2 bg-blue-500 rounded-full"
+                            style={{width: `${areaScores.wrinkles * 10}%`}}
                         ></div>
                     </div>
                     <p className="text-sm">
@@ -371,27 +371,24 @@ function Analysis({ activeSection, setActiveSection }) {
                 </div>
 
                 <div className="bg-white rounded-lg p-6 shadow-lg border-t-4 border-yellow-500">
-                    <h3 className="text-lg font-bold text-red-600 mb-4">Pigmentation ({areaScores.pigmentation}/10)</h3>
-                    <div className="relative h-2 bg-gray-200 rounded-full mb-4">
+                    <h3 className="text-lg font-bold text-red-600 mb-4">Đốm Sắc Tố ({areaScores.pigmentation}/10)</h3>
+                    <div className="relative h-2 w-full bg-gray-200 rounded-full mb-4">
                         <div
-                            className="absolute h-2 bg-gradient-to-r from-green-500 to-red-500 rounded-full"
-                            style={{ width: `${areaScores.pigmentation * 10}%` }}
+                            className="absolute top-0 left-0 h-2 bg-yellow-500 rounded-full"
+                            style={{width: `${areaScores.pigmentation * 10}%`}}
                         ></div>
                     </div>
                     <p className="text-sm">
-                        {skinData?.result?.skin_type?.skin_type === 3 && "Da dầu, cần kiểm soát bã nhờn và ngăn ngừa viêm"}
-                        {skinData?.result?.skin_type?.skin_type === 2 && "Da hỗn hợp, cần cân bằng vùng da dầu và khô"}
-                        {skinData?.result?.skin_type?.skin_type === 1 && "Da khô, cần bổ sung độ ẩm"}
-                        {(skinData?.result?.skin_type?.skin_type === 0 || !skinData?.result?.skin_type?.skin_type) && "Chưa xác định loại da"}
+                        {skinData?.result?.skin_spot?.rectangle?.length > 0 && "Da có dấu hiệu đốm nâu, cần chăm sóc đặc biệt"}
                     </p>
                 </div>
 
                 <div className="bg-white rounded-lg p-6 shadow-lg border-t-4 border-purple-500">
-                    <h3 className="text-lg font-bold text-red-600 mb-4">Skin Dryness ({areaScores.dryness}/10)</h3>
-                    <div className="relative h-2 bg-gray-200 rounded-full mb-4">
+                    <h3 className="text-lg font-bold text-red-600 mb-4">Khô Da ({areaScores.dryness}/10)</h3>
+                    <div className="relative h-2 w-full bg-gray-200 rounded-full mb-4">
                         <div
-                            className="absolute h-2 bg-gradient-to-r from-green-500 to-red-500 rounded-full"
-                            style={{ width: `${areaScores.dryness * 10}%` }}
+                            className="absolute top-0 left-0 h-2 bg-purple-500 rounded-full"
+                            style={{width: `${areaScores.dryness * 10}%`}}
                         ></div>
                     </div>
                     <p className="text-sm">
@@ -402,53 +399,53 @@ function Analysis({ activeSection, setActiveSection }) {
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg p-6 shadow-lg mb-8">
-                <h3 className="text-xl font-bold mb-4 text-gray-800">Chi tiết các vấn đề về da</h3>
+            {/*<div className="bg-white rounded-lg p-6 shadow-lg mb-8">*/}
+            {/*    <h3 className="text-xl font-bold mb-4 text-gray-800">Chi tiết các vấn đề về da</h3>*/}
 
-                <div className="space-y-4">
-                    {hasAcne && (
-                        <div className="flex items-center">
-                            <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                            <p>Mụn: {skinData?.result?.acne?.rectangle?.length} vị trí</p>
-                        </div>
-                    )}
+            {/*    <div className="space-y-4">*/}
+            {/*        {hasAcne && (*/}
+            {/*            <div className="flex items-center">*/}
+            {/*            <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>*/}
+            {/*                <p>Mụn: {skinData?.result?.acne?.rectangle?.length} vị trí</p>*/}
+            {/*            </div>*/}
+            {/*        )}*/}
 
-                    {hasMoles && (
-                        <div className="flex items-center">
-                            <div className="w-3 h-3 bg-yellow-800 rounded-full mr-2"></div>
-                            <p>Nốt ruồi: {skinData?.result?.mole?.rectangle?.length} vị trí</p>
-                        </div>
-                    )}
+            {/*        {hasMoles && (*/}
+            {/*            <div className="flex items-center">*/}
+            {/*                <div className="w-3 h-3 bg-yellow-800 rounded-full mr-2"></div>*/}
+            {/*                <p>Nốt ruồi: {skinData?.result?.mole?.rectangle?.length} vị trí</p>*/}
+            {/*            </div>*/}
+            {/*        )}*/}
 
-                    {hasSpots && (
-                        <div className="flex items-center">
-                            <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>
-                            <p>Đốm nâu: {skinData?.result?.skin_spot?.rectangle?.length} vị trí</p>
-                        </div>
-                    )}
+            {/*        {hasSpots && (*/}
+            {/*            <div className="flex items-center">*/}
+            {/*                <div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>*/}
+            {/*                <p>Đốm nâu: {skinData?.result?.skin_spot?.rectangle?.length} vị trí</p>*/}
+            {/*            </div>*/}
+            {/*        )}*/}
 
-                    {hasSensitivity && (
-                        <div className="flex items-center">
-                            <div className="w-3 h-3 bg-pink-500 rounded-full mr-2"></div>
-                            <p>Da nhạy cảm: Vùng nhạy cảm {(skinData?.result?.sensitivity?.sensitivity_area * 100).toFixed(0)}% với cường độ {skinData?.result?.sensitivity?.sensitivity_intensity?.toFixed(1)}</p>
-                        </div>
-                    )}
+            {/*        {hasSensitivity && (*/}
+            {/*            <div className="flex items-center">*/}
+            {/*                <div className="w-3 h-3 bg-pink-500 rounded-full mr-2"></div>*/}
+            {/*                <p>Da nhạy cảm: Vùng nhạy cảm {(skinData?.result?.sensitivity?.sensitivity_area * 100).toFixed(0)}% với cường độ {skinData?.result?.sensitivity?.sensitivity_intensity?.toFixed(1)}</p>*/}
+            {/*            </div>*/}
+            {/*        )}*/}
 
-                    {skinData?.result?.dark_circle?.value > 0 && (
-                        <div className="flex items-center">
-                            <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
-                            <p>Quầng thâm mắt: Mức độ {skinData?.result?.dark_circle?.value}/2 (Độ tin cậy: {(skinData?.result?.dark_circle?.confidence * 100).toFixed(0)}%)</p>
-                        </div>
-                    )}
+            {/*        {skinData?.result?.dark_circle?.value > 0 && (*/}
+            {/*            <div className="flex items-center">*/}
+            {/*                <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>*/}
+            {/*                <p>Quầng thâm mắt: Mức độ {skinData?.result?.dark_circle?.value}/2 (Độ tin cậy: {(skinData?.result?.dark_circle?.confidence * 100).toFixed(0)}%)</p>*/}
+            {/*            </div>*/}
+            {/*        )}*/}
 
-                    {skinData?.result?.eye_pouch?.value > 0 && (
-                        <div className="flex items-center">
-                            <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-                            <p>Túi mắt: Mức độ {skinData?.result?.eye_pouch?.value}/2 (Độ tin cậy: {(skinData?.result?.eye_pouch?.confidence * 100).toFixed(0)}%)</p>
-                        </div>
-                    )}
-                </div>
-            </div>
+            {/*        {skinData?.result?.eye_pouch?.value > 0 && (*/}
+            {/*            <div className="flex items-center">*/}
+            {/*                <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>*/}
+            {/*                <p>Túi mắt: Mức độ {skinData?.result?.eye_pouch?.value}/2 (Độ tin cậy: {(skinData?.result?.eye_pouch?.confidence * 100).toFixed(0)}%)</p>*/}
+            {/*            </div>*/}
+            {/*        )}*/}
+            {/*    </div>*/}
+            {/*</div>*/}
 
             <style jsx>{`
                 .skin-analysis-slider .slick-slide {
@@ -470,6 +467,11 @@ function Analysis({ activeSection, setActiveSection }) {
             `}</style>
 
             <div className="text-center">
+                <button className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition shadow-lg mr-4"
+                    onClick={() => setActiveSection('home')}
+                >
+                    Phân tích lại
+                </button>
                 <button
                     className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition shadow-lg"
                     onClick={() => setActiveSection('advice')}
