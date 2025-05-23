@@ -8,7 +8,7 @@ function Analysis({activeSection, setActiveSection}) {
     const [loading, setLoading] = useState(true);
     let imageFile = localStorage.getItem('analysisResult');
     imageFile = imageFile ? JSON.parse(imageFile) : null;
-    const imageUrl = (imageFile ? 'https://pet-commonly-whippet.ngrok-free.app/overlays/' + imageFile.uid : 'https://pet-commonly-whippet.ngrok-free.app/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png');
+    const imageUrl = (imageFile ? 'https://pet-commonly-whippet.ngrok-free.app/media/overlays/' + imageFile.uid : 'https://pet-commonly-whippet.ngrok-free.app/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png');
 
     useEffect(() => {
         // In a real application, you would import the data or fetch it
