@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.0.0",
     "@tailwindcss/vite": "^4.0.9",
+    "antd": "^5.25.2",
     "face-api.js": "^0.22.2",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",

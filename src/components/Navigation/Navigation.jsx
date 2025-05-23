@@ -11,9 +11,9 @@ function Navigation({ activeSection, setActiveSection }) {
                 <div className="flex items-center space-x-4">
                     <nav className="flex space-x-6">
                         <a
-                            href="#home"
+                            href="/"
                             className={`section-toggle ${activeSection === 'home' ? 'nav-active text-blue-900 font-medium' : 'text-gray-600 hover:text-blue-900'}`}
-                            onClick={() => handleSectionChange('home')}
+                            onClick={() => window.location.reload()}
                         >
                             <i className="fas fa-home text-2xl text-blue-900"></i>
                         </a>

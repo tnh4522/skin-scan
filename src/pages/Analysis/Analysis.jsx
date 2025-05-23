@@ -65,19 +65,19 @@ function Analysis({activeSection, setActiveSection}) {
             data.result.glabella_wrinkle?.value || 0,
             data.result.nasolabial_fold?.value || 0
         ];
-        const wrinklesScore = Math.round((wrinklesFactors.reduce((a, b) => a + b, 0) / wrinklesFactors.length) * 5);
+        const wrinklesScore = Math.round((wrinklesFactors.reduce((a, b) => a + b, 0) / wrinklesFactors.length) * 2);
 
         // Pigmentation score
         const pigmentationFactors = [
             (data.result.skin_spot?.rectangle?.length || 0) > 0 ? 2 : 0,
             data.result.blackhead?.value || 0
         ];
-        const pigmentationScore = Math.round((pigmentationFactors.reduce((a, b) => a + b, 0) / pigmentationFactors.length) * 5);
+        const pigmentationScore = Math.round((pigmentationFactors.reduce((a, b) => a + b, 0) / pigmentationFactors.length));
 
         // Dryness/Oiliness score based on skin type
         const skinTypeValue = data.result.skin_type?.skin_type || 0;
         // Normalize to 0-10 scale where 5 is balanced
-        const drynessScore = Math.min(10, Math.max(0, Math.abs(skinTypeValue - 2) * 3 + 4));
+        const drynessScore = Math.min(10, Math.max(0, Math.abs(skinTypeValue - 2) * 2 + 1));
 
         return {
             wrinkles: wrinklesScore,
@@ -339,7 +339,7 @@ function Analysis({activeSection, setActiveSection}) {
             <div className="bg-blue-50 rounded-lg p-2 mb-2 text-center">
                 <img src={imageUrl} alt="Skin Analysis" className="w-full h-auto rounded-lg shadow-lg mb-4"/>
                 <p className="text-2xl font-bold">Mức độ lão hóa da :
-                    <span className="text-red-600"> {agingResult.score}/10</span>
+                    <span className="text-red-600"> {agingResult.score}/5</span>
                     {/*<span className="text-gray-600"> ({agingResult.status})</span>*/}
                 </p>
 
@@ -358,11 +358,11 @@ function Analysis({activeSection, setActiveSection}) {
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
                 <div className="bg-white rounded-lg p-6 shadow-lg border-t-4 border-blue-500">
-                    <h3 className="text-lg font-bold text-red-600 mb-4">Nếp Nhăn ({areaScores.wrinkles}/10)</h3>
+                    <h3 className="text-lg font-bold text-red-600 mb-4">Nếp Nhăn ({areaScores.wrinkles}/5)</h3>
                     <div className="relative h-2 w-full bg-gray-200 rounded-full mb-4">
                         <div
                             className="absolute top-0 left-0 h-2 bg-blue-500 rounded-full"
-                            style={{width: `${areaScores.wrinkles * 10}%`}}
+                            style={{width: `${areaScores.wrinkles * 20}%`}}
                         ></div>
                     </div>
                     <p className="text-sm">
@@ -373,11 +373,11 @@ function Analysis({activeSection, setActiveSection}) {
                 </div>
 
                 <div className="bg-white rounded-lg p-6 shadow-lg border-t-4 border-yellow-500">
-                    <h3 className="text-lg font-bold text-red-600 mb-4">Đốm Sắc Tố ({areaScores.pigmentation}/10)</h3>
+                    <h3 className="text-lg font-bold text-red-600 mb-4">Đốm Sắc Tố ({areaScores.pigmentation}/5)</h3>
                     <div className="relative h-2 w-full bg-gray-200 rounded-full mb-4">
                         <div
                             className="absolute top-0 left-0 h-2 bg-yellow-500 rounded-full"
-                            style={{width: `${areaScores.pigmentation * 10}%`}}
+                            style={{width: `${areaScores.pigmentation * 20}%`}}
                         ></div>
                     </div>
                     <p className="text-sm">
@@ -386,11 +386,11 @@ function Analysis({activeSection, setActiveSection}) {
                 </div>
 
                 <div className="bg-white rounded-lg p-6 shadow-lg border-t-4 border-purple-500">
-                    <h3 className="text-lg font-bold text-red-600 mb-4">Khô Da ({areaScores.dryness}/10)</h3>
+                    <h3 className="text-lg font-bold text-red-600 mb-4">Khô Da ({areaScores.dryness}/5)</h3>
                     <div className="relative h-2 w-full bg-gray-200 rounded-full mb-4">
                         <div
                             className="absolute top-0 left-0 h-2 bg-purple-500 rounded-full"
-                            style={{width: `${areaScores.dryness * 10}%`}}
+                            style={{width: `${areaScores.dryness * 20}%`}}
                         ></div>
                     </div>
                     <p className="text-sm">
@@ -475,7 +475,7 @@ function Analysis({activeSection, setActiveSection}) {
             <div className="text-center">
                 <button
                     className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition shadow-lg mr-4"
-                    onClick={() => setActiveSection('home')}
+                    onClick={() => window.location.reload()}
                 >
                     Phân tích lại
                 </button>

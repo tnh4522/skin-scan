@@ -1,5 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import * as faceapi from 'face-api.js';
+import {Button, Modal} from "antd";
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 /**
  * Home component – allows the user to enter age & gender, then start an AI‑powered skin scan.
@@ -9,6 +11,16 @@ function Home({ activeSection, setActiveSection }) {
     /* ------------------------------------------------------------------
      *  State & references
      * ----------------------------------------------------------------*/
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
     const [mediaStream, setMediaStream] = useState(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [faceDetected, setFaceDetected] = useState(false);
@@ -19,7 +31,7 @@ function Home({ activeSection, setActiveSection }) {
     const [gender, setGender] = useState('');     // "male" | "female" | "other"
 
     // Add state for camera dimensions
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const [dimensions, setDimensions] = useState({width: 0, height: 0});
 
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
@@ -65,7 +77,7 @@ function Home({ activeSection, setActiveSection }) {
                 // Force portrait mode (vertical) dimensions
                 // We'll use a 3:4 aspect ratio for portrait mode
                 const containerWidth = videoContainerRef.current.clientWidth;
-                const targetHeight = containerWidth * (4/3);
+                const targetHeight = containerWidth * (4 / 3);
 
                 setDimensions({
                     width: containerWidth,
@@ -110,6 +122,7 @@ function Home({ activeSection, setActiveSection }) {
         try {
             // Clear uploaded image when starting camera
             setUploadedImage(null);
+            showModal();
 
             // Attempt to request portrait orientation for mobile devices
             if (window.screen && window.screen.orientation) {
@@ -123,7 +136,7 @@ function Home({ activeSection, setActiveSection }) {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     facingMode: 'user',
-                    aspectRatio: { ideal: 0.75 } // 3:4 aspect ratio (portrait)
+                    aspectRatio: {ideal: 0.75} // 3:4 aspect ratio (portrait)
                 }
             });
 
@@ -159,17 +172,20 @@ function Home({ activeSection, setActiveSection }) {
         if (!videoRef.current || !canvasRef.current) return;
 
         // Set canvas dimensions to match the video
-        canvasRef.current.width  = videoRef.current.videoWidth;
+        canvasRef.current.width = videoRef.current.videoWidth;
         canvasRef.current.height = videoRef.current.videoHeight;
 
         const displaySize = {
-            width:  videoRef.current.videoWidth,
+            width: videoRef.current.videoWidth,
             height: videoRef.current.videoHeight
         };
         faceapi.matchDimensions(canvasRef.current, displaySize);
 
         const id = setInterval(async () => {
-            if (!videoRef.current) { clearInterval(id); return; }
+            if (!videoRef.current) {
+                clearInterval(id);
+                return;
+            }
             const detections = await faceapi
                 .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
                 .withFaceLandmarks()
@@ -239,7 +255,7 @@ function Home({ activeSection, setActiveSection }) {
 
         // Capture frame to an off‑screen canvas
         const tmp = document.createElement('canvas');
-        tmp.width  = videoRef.current.videoWidth;
+        tmp.width = videoRef.current.videoWidth;
         tmp.height = videoRef.current.videoHeight;
         tmp.getContext('2d').drawImage(videoRef.current, 0, 0);
         const dataUrl = tmp.toDataURL('image/png');
@@ -249,15 +265,15 @@ function Home({ activeSection, setActiveSection }) {
             setIsUploading(true);
             const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image_base64: dataUrl, age: parseInt(age, 10), gender })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({image_base64: dataUrl, age: parseInt(age, 10), gender})
             });
             if (!response.ok) throw new Error('Không thể tải ảnh lên server');
 
             const result = await response.json();
 
             // Use React state instead of localStorage
-            if(result.status === 200) {
+            if (result.status === 200) {
                 localStorage.removeItem('analysisResult');
                 localStorage.setItem('analysisResult', JSON.stringify(result));
                 setActiveSection('analysis');
@@ -277,7 +293,7 @@ function Home({ activeSection, setActiveSection }) {
             setIsUploading(true);
             const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     image_base64: uploadedImage,
                     age: parseInt(age, 10),
@@ -289,7 +305,7 @@ function Home({ activeSection, setActiveSection }) {
 
             const result = await response.json();
 
-            if(result.status === 200) {
+            if (result.status === 200) {
                 localStorage.removeItem('analysisResult');
                 localStorage.setItem('analysisResult', JSON.stringify(result));
                 setActiveSection('analysis');
@@ -358,6 +374,29 @@ function Home({ activeSection, setActiveSection }) {
                         backgroundRepeat: 'no-repeat',
                     }}
                 >
+                    <Modal
+                        title={<p><ExclamationCircleFilled/> LƯU Ý KHI SOI DA </p>}
+                        closable={{'aria-label': 'Custom Close Button'}}
+                        open={isModalOpen}
+                        onOk={handleOk}
+                        onCancel={handleCancel}
+                        footer={[
+                            <Button key="ok" onClick={handleCancel}>
+                                OK
+                            </Button>
+                        ]}
+                    >
+                        <ul className="list-disc pl-5">
+                            <li>Để có kết quả chính xác nhất, vui lòng giữ camera ở khoảng cách 30-50cm và nhìn
+                                thẳng vào camera.
+                            </li>
+                            <li>Không gian xung quanh nên đủ sáng và không có ánh sáng chói.</li>
+                            <li>Cởi bỏ kính mắt, mun, hoặc các vật cản khác trên mặt.</li>
+                            <li>Giữ tóc gọn gàng, không che mặt.</li>
+                            <li>Không nên có người khác trong khung hình.</li>
+                            <li>Không nên có ánh sáng mạnh phía sau.</li>
+                        </ul>
+                    </Modal>
                     <div className="vertical-camera-container">
                         <video
                             ref={videoRef}
