@@ -311,7 +311,7 @@ function Home({ activeSection, setActiveSection }) {
             className={`fade-in container mx-auto px-4 ${activeSection === 'home' ? 'block' : 'hidden'}`}
         >
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-blue-900">CHẨN ĐOÁN DA LÃO HÓA</h1>
+                <h1 className="text-2xl font-bold text-blue-900">CHẨN ĐOÁN DA LÃO HÓA</h1>
                 <p className="text-gray-600 mb-2">Ứng dụng công nghệ AI phân tích da hàng đầu</p>
 
                 {/* ---------------- User info form ---------------- */}
