@@ -247,7 +247,7 @@ function Home({ activeSection, setActiveSection }) {
         try {
             stopCamera();
             setIsUploading(true);
-            const response = await fetch('http://localhost:8000/api/detect/', {
+            const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ image_base64: dataUrl, age: parseInt(age, 10), gender })
@@ -275,7 +275,7 @@ function Home({ activeSection, setActiveSection }) {
 
         try {
             setIsUploading(true);
-            const response = await fetch('http://localhost:8000/api/detect/', {
+            const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -352,7 +352,7 @@ function Home({ activeSection, setActiveSection }) {
                         display: userInfoComplete && !uploadedImage ? 'block' : 'none',
                         maxHeight: '80vh',
                         overflow: 'hidden',
-                        backgroundImage: "url('http://localhost:8000/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png')",
+                        backgroundImage: "url('https://pet-commonly-whippet.ngrok-free.app/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png')",
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',

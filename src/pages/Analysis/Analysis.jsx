@@ -8,7 +8,7 @@ function Analysis({activeSection, setActiveSection}) {
     const [loading, setLoading] = useState(true);
     let imageFile = localStorage.getItem('analysisResult');
     imageFile = imageFile ? JSON.parse(imageFile) : null;
-    const imageUrl = (imageFile ? 'http://localhost:8000/media/overlays/' + imageFile.uid : 'http://localhost:8000/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png');
+    const imageUrl = (imageFile ? 'https://pet-commonly-whippet.ngrok-free.app/overlays/' + imageFile.uid : 'https://pet-commonly-whippet.ngrok-free.app/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png');
 
     useEffect(() => {
         // In a real application, you would import the data or fetch it
@@ -90,7 +90,7 @@ function Analysis({activeSection, setActiveSection}) {
     const SkinBaseImage = ({skinData}) => (
         <div className="relative w-full h-full">
             <img
-                src="http://localhost:8000/media/uploads/1741780530.png"
+                src="https://pet-commonly-whippet.ngrok-free.app/media/uploads/1741780530.png"
                 alt="Skin Analysis"
                 className="w-full h-auto rounded-lg shadow-lg"
             />
