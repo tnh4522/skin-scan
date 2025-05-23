@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-function Analysis({ activeSection, setActiveSection }) {
+function Analysis({activeSection, setActiveSection}) {
     const [skinData, setSkinData] = useState(null);
     const [loading, setLoading] = useState(true);
     let imageFile = localStorage.getItem('analysisResult');
     imageFile = imageFile ? JSON.parse(imageFile) : null;
-    const imageUrl = imageFile ? 'http://localhost:8000/media/overlays/' + imageFile.uid : 'http://localhost:8000/media/uploads/1741780530.png';
+    const imageUrl = (imageFile ? 'http://localhost:8000/media/overlays/' + imageFile.uid : 'http://localhost:8000/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png');
 
     useEffect(() => {
         // In a real application, you would import the data or fetch it
@@ -26,7 +26,7 @@ function Analysis({ activeSection, setActiveSection }) {
 
     // Calculate skin aging score based on various factors
     const calculateSkinAgingScore = (data) => {
-        if (!data || !data.result) return { score: 0, status: "Unknown" };
+        if (!data || !data.result) return {score: 0, status: "Unknown"};
 
         const factors = [
             data.result.forehead_wrinkle?.value || 0,
@@ -50,7 +50,7 @@ function Analysis({ activeSection, setActiveSection }) {
         else if (score < 5) status = "Good";
         else if (score > 7) status = "Concerning";
 
-        return { score, status };
+        return {score, status};
     };
 
     // Calculate scores for specific areas
@@ -87,7 +87,7 @@ function Analysis({ activeSection, setActiveSection }) {
     };
 
     // Base skin image with face detection component
-    const SkinBaseImage = ({ skinData }) => (
+    const SkinBaseImage = ({skinData}) => (
         <div className="relative w-full h-full">
             <img
                 src="http://localhost:8000/media/uploads/1741780530.png"
@@ -110,9 +110,9 @@ function Analysis({ activeSection, setActiveSection }) {
     );
 
     // Acne slide component
-    const AcneSlide = ({ skinData }) => (
+    const AcneSlide = ({skinData}) => (
         <div className="relative w-full h-full">
-            <SkinBaseImage skinData={skinData} />
+            <SkinBaseImage skinData={skinData}/>
 
             {/* Plot acne positions */}
             {skinData?.result?.acne?.rectangle?.map((rect, index) => (
@@ -141,9 +141,9 @@ function Analysis({ activeSection, setActiveSection }) {
     );
 
     // Mole slide component
-    const MoleSlide = ({ skinData }) => (
+    const MoleSlide = ({skinData}) => (
         <div className="relative w-full h-full">
-            <SkinBaseImage skinData={skinData} />
+            <SkinBaseImage skinData={skinData}/>
 
             {/* Plot moles */}
             {skinData?.result?.mole?.rectangle?.map((rect, index) => (
@@ -172,9 +172,9 @@ function Analysis({ activeSection, setActiveSection }) {
     );
 
     // Skin spot slide component
-    const SpotSlide = ({ skinData }) => (
+    const SpotSlide = ({skinData}) => (
         <div className="relative w-full h-full">
-            <SkinBaseImage skinData={skinData} />
+            <SkinBaseImage skinData={skinData}/>
 
             {/* Plot skin spots */}
             {skinData?.result?.skin_spot?.rectangle?.map((rect, index) => (
@@ -203,16 +203,16 @@ function Analysis({ activeSection, setActiveSection }) {
     );
 
     // Wrinkle slide component
-    const WrinkleSlide = ({ skinData, areaScores }) => (
+    const WrinkleSlide = ({skinData, areaScores}) => (
         <div className="relative w-full h-full">
-            <SkinBaseImage skinData={skinData} />
+            <SkinBaseImage skinData={skinData}/>
 
             {/* Add wrinkle indicators */}
             {skinData?.result?.forehead_wrinkle?.value > 0 && (
                 <div
                     className="absolute border-2 border-pink-400 rounded-full flex items-center justify-center bg-white bg-opacity-50 px-2"
                     style={{
-                        left: `${(skinData.face_rectangle.left + skinData.face_rectangle.width/2) - 40}px`,
+                        left: `${(skinData.face_rectangle.left + skinData.face_rectangle.width / 2) - 40}px`,
                         top: `${skinData.face_rectangle.top + 20}px`,
                         pointerEvents: 'none',
                         zIndex: 20
@@ -227,7 +227,7 @@ function Analysis({ activeSection, setActiveSection }) {
                     className="absolute border-2 border-pink-400 rounded-full flex items-center justify-center bg-white bg-opacity-50 px-2"
                     style={{
                         left: `${(skinData.face_rectangle.left + skinData.face_rectangle.width) - 50}px`,
-                        top: `${skinData.face_rectangle.top + skinData.face_rectangle.height/2}px`,
+                        top: `${skinData.face_rectangle.top + skinData.face_rectangle.height / 2}px`,
                         pointerEvents: 'none',
                         zIndex: 20
                     }}
@@ -241,7 +241,7 @@ function Analysis({ activeSection, setActiveSection }) {
                 <div className="relative h-2 bg-gray-200 rounded-full my-2 w-32">
                     <div
                         className="absolute h-2 bg-gradient-to-r from-green-500 to-red-500 rounded-full"
-                        style={{ width: `${areaScores.wrinkles * 10}%` }}
+                        style={{width: `${areaScores.wrinkles * 10}%`}}
                     ></div>
                 </div>
                 <p className="text-xs">
@@ -254,17 +254,17 @@ function Analysis({ activeSection, setActiveSection }) {
     );
 
     // Dark circles and eye pouches slide
-    const EyeIssuesSlide = ({ skinData }) => (
+    const EyeIssuesSlide = ({skinData}) => (
         <div className="relative w-full h-full">
-            <SkinBaseImage skinData={skinData} />
+            <SkinBaseImage skinData={skinData}/>
 
             {/* Eye area indicators */}
             {skinData?.result?.dark_circle?.value > 0 && (
                 <div
                     className="absolute border-2 border-purple-400 rounded-full flex items-center justify-center bg-white bg-opacity-50 px-2"
                     style={{
-                        left: `${skinData.face_rectangle.left + skinData.face_rectangle.width/4}px`,
-                        top: `${skinData.face_rectangle.top + skinData.face_rectangle.height/3}px`,
+                        left: `${skinData.face_rectangle.left + skinData.face_rectangle.width / 4}px`,
+                        top: `${skinData.face_rectangle.top + skinData.face_rectangle.height / 3}px`,
                         pointerEvents: 'none',
                         zIndex: 20
                     }}
@@ -277,8 +277,8 @@ function Analysis({ activeSection, setActiveSection }) {
                 <div
                     className="absolute border-2 border-blue-400 rounded-full flex items-center justify-center bg-white bg-opacity-50 px-2"
                     style={{
-                        left: `${skinData.face_rectangle.left + (skinData.face_rectangle.width * 3/4)}px`,
-                        top: `${skinData.face_rectangle.top + skinData.face_rectangle.height/3}px`,
+                        left: `${skinData.face_rectangle.left + (skinData.face_rectangle.width * 3 / 4)}px`,
+                        top: `${skinData.face_rectangle.top + skinData.face_rectangle.height / 3}px`,
                         pointerEvents: 'none',
                         zIndex: 20
                     }}
@@ -301,7 +301,8 @@ function Analysis({ activeSection, setActiveSection }) {
 
     if (loading) {
         return (
-            <section id="analysis" className={`fade-in container mx-auto px-4 ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
+            <section id="analysis"
+                     className={`fade-in container mx-auto px-4 ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
                 <div className="flex justify-center items-center h-64">
                     <p className="text-xl">Đang tải dữ liệu phân tích...</p>
                 </div>
@@ -333,9 +334,10 @@ function Analysis({ activeSection, setActiveSection }) {
     const hasSensitivity = skinData?.result?.sensitivity?.sensitivity_area > 0.2;
 
     return (
-        <section id="analysis" className={`fade-in container mx-auto px-4 py-8 ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
+        <section id="analysis"
+                 className={`fade-in container mx-auto px-4 py-8 ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
             <div className="bg-blue-50 rounded-lg p-2 mb-2 text-center">
-                <img src={imageUrl} alt="Skin Analysis" className="w-full h-auto rounded-lg shadow-lg mb-4" />
+                <img src={imageUrl} alt="Skin Analysis" className="w-full h-auto rounded-lg shadow-lg mb-4"/>
                 <p className="text-2xl font-bold">Mức độ lão hóa da :
                     <span className="text-red-600"> {agingResult.score}/10</span>
                     {/*<span className="text-gray-600"> ({agingResult.status})</span>*/}
@@ -451,23 +453,28 @@ function Analysis({ activeSection, setActiveSection }) {
                 .skin-analysis-slider .slick-slide {
                     height: 400px;
                 }
+
                 .skin-analysis-slider .slick-dots {
                     bottom: -30px;
                 }
+
                 .skin-analysis-slider .slick-prev,
                 .skin-analysis-slider .slick-next {
                     z-index: 10;
                 }
+
                 .skin-analysis-slider .slick-prev {
                     left: 10px;
                 }
+
                 .skin-analysis-slider .slick-next {
                     right: 10px;
                 }
             `}</style>
 
             <div className="text-center">
-                <button className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition shadow-lg mr-4"
+                <button
+                    className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition shadow-lg mr-4"
                     onClick={() => setActiveSection('home')}
                 >
                     Phân tích lại

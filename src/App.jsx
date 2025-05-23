@@ -16,7 +16,6 @@ function App() {
             <History activeSection={activeSection} />
             <Analysis activeSection={activeSection} setActiveSection={setActiveSection} />
             <Advice activeSection={activeSection} />
-            <Footer />
         </div>
     );
 }

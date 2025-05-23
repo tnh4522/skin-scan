@@ -258,6 +258,8 @@ function Home({ activeSection, setActiveSection }) {
 
             // Use React state instead of localStorage
             if(result.status === 200) {
+                localStorage.removeItem('analysisResult');
+                localStorage.setItem('analysisResult', JSON.stringify(result));
                 setActiveSection('analysis');
             }
         } catch (error) {
@@ -288,8 +290,9 @@ function Home({ activeSection, setActiveSection }) {
             const result = await response.json();
 
             if(result.status === 200) {
-                setActiveSection('analysis');
+                localStorage.removeItem('analysisResult');
                 localStorage.setItem('analysisResult', JSON.stringify(result));
+                setActiveSection('analysis');
             }
         } catch (error) {
             console.error('Lỗi khi tải ảnh lên:', error);
