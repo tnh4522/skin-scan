@@ -8,4 +8,24 @@ export default defineConfig({
         react(),
         tailwindcss(),
     ],
+    server: {
+        allowedHosts: [
+            'included-sheepdog-slowly.ngrok-free.app',
+        ],
+        host: true,
+        strictPort: true,
+        port: 5173,
+        proxy: {
+            '/ngrok': {
+                target: 'https://included-sheepdog-slowly.ngrok-free.app',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/ngrok/, ''),
+                configure: (proxy) => {
+                    proxy.on('proxyReq', (proxyReq) => {
+                        proxyReq.setHeader('ngrok-skip-browser-warning', 'true');
+                    });
+                },
+            },
+        },
+    },
 })
