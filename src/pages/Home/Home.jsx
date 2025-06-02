@@ -333,7 +333,7 @@ function Home({ activeSection, setActiveSection }) {
                 {/* ---------------- User info form ---------------- */}
                 {(!isCameraOpen && !userInfoComplete && !uploadedImage) && (
                     <div className="mb-8 max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
-                        <h2 className="text-xl font-semibold mb-4 text-left">Thông tin người dùng</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-center">Thông tin người dùng</h2>
                         <label className="block text-left mb-2 font-medium">Độ tuổi</label>
                         <input
                             type="number"
@@ -382,14 +382,12 @@ function Home({ activeSection, setActiveSection }) {
                         onCancel={handleCancel}
                         footer={[
                             <Button key="ok" onClick={handleCancel}>
-                                OK
+                                Xác Nhận
                             </Button>
                         ]}
                     >
                         <ul className="list-disc pl-5">
-                            <li>Để có kết quả chính xác nhất, vui lòng giữ camera ở khoảng cách 30-50cm và nhìn
-                                thẳng vào camera.
-                            </li>
+                            <li>Để có kết quả chính xác nhất, vui lòng giữ camera ở khoảng cách 30-50cm và nhìn thẳng vào camera.</li>
                             <li>Không gian xung quanh nên đủ sáng và không có ánh sáng chói.</li>
                             <li>Cởi bỏ kính mắt, mun, hoặc các vật cản khác trên mặt.</li>
                             <li>Giữ tóc gọn gàng, không che mặt.</li>

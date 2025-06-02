@@ -1,0 +1,87 @@
+[
+  {
+    "name": "Serum Vitamin C 12%",
+    "image": "https://example.com/image.jpg",
+    "brand": "La Roche-Posay",
+    "ingredients": [
+      {
+        "name": "Ascorbic Acid",
+        "concentration": "12%",
+        "function": "Chống oxy hóa, ức chế tyrosinase, thúc đẩy tổng hợp collagen"
+      },
+      {
+        "name": "Salicylic Acid",
+        "concentration": "Không ghi rõ",
+        "function": "Tẩy tế bào chết, làm sạch lỗ chân lông"
+      },
+      {
+        "name": "Neurosensine (Acetyl Dipeptide-1 Cetyl Ester)",
+        "concentration": "Không ghi rõ",
+        "function": "Làm dịu da, giảm kích ứng"
+      },
+      {
+        "name": "Hyaluronic Acid",
+        "concentration": "Không ghi rõ",
+        "function": "Cấp ẩm, hỗ trợ hàng rào bảo vệ da"
+      },
+      {
+        "name": "Glycerin",
+        "concentration": "Không ghi rõ",
+        "function": "Chất giữ ẩm, cấp nước cho da"
+      },
+      {
+        "name": "Nước khoáng La Roche-Posay",
+        "concentration": "Không ghi rõ",
+        "function": "Làm dịu, cung cấp khoáng chất và chất chống oxy hóa"
+      }
+    ],
+    "pH_level": "Không ghi rõ, được tối ưu hóa để phát huy hiệu quả của Vitamin C",
+    "description": "Một loại serum mạnh mẽ giúp làm sáng da, giảm các dấu hiệu lão hóa và làm dịu da nhạy cảm.",
+    "category": "serum",
+    "clinical_indications": [
+      "Lão hóa do ánh nắng",
+      "Tăng sắc tố",
+      "Da xỉn màu",
+      "Da mất nước"
+    ],
+    "target_skin_type": [
+      "Da khô",
+      "Da thường",
+      "Da hỗn hợp",
+      "Da nhạy cảm"
+    ],
+    "target_age": "30-40 tuổi",
+    "clinical_efficacy": {
+      "wrinkles": "Giảm 41% nếp nhăn sau 8 tuần",
+      "skin_brightness": "Cải thiện độ sáng da 70% sau 8 tuần",
+      "skin_smoothness": "Cải thiện độ mịn da 83% sau 8 tuần",
+      "user_satisfaction": "92% người dùng nhận thấy giảm nếp nhăn nhỏ"
+    },
+    "contraindications": [
+      "Dị ứng với bất kỳ thành phần nào",
+      "Da cực kỳ nhạy cảm",
+      "Chứng đỏ mặt (Rosacea)",
+      "Vết thương hở"
+    ],
+    "side_effects": [
+      "Kích ứng nhẹ",
+      "Đỏ da",
+      "Cảm giác châm chích",
+      "Đẩy mụn ban đầu"
+    ],
+    "usage_instructions": "Thoa 3-4 giọt lên da sạch và khô vào buổi sáng. Sau đó dùng kem dưỡng và kem chống nắng SPF ≥ 30. Nên thử trên một vùng da nhỏ trước khi sử dụng toàn mặt.",
+    "incompatible_ingredients": [
+      "Niacinamide ở pH thấp",
+      "Retinol trong cùng quy trình"
+    ],
+    "stability": "Bảo quản nơi mát, tối. Sản phẩm có thể đổi màu nhưng vẫn hiệu quả.",
+    "certifications": [
+      "Được kiểm nghiệm bởi bác sĩ da liễu",
+      "Không gây bít tắc lỗ chân lông",
+      "Không chứa dầu",
+      "Không chứa paraben",
+      "Được 100.000 bác sĩ da liễu trên toàn thế giới khuyên dùng"
+    ],
+    "expected_results_timeline": "Làm sáng da rõ rệt sau 4-6 tuần, giảm nếp nhăn đáng kể sau 8-12 tuần"
+  }
+]
