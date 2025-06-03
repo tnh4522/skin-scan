@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     ChevronDown, ChevronUp, Heart, MessageCircle, Sun, Moon, Droplets,
     Sparkles, Clock, Shield
@@ -110,7 +110,31 @@ function Advice({activeSection = 'advice'}) {
         ]
     };
 
-    const recommendation = mockRecommendation;
+    const [recommendation, setRecommendation] = useState(mockRecommendation);
+
+    useEffect(() => {
+        try {
+            const storedData = localStorage.getItem('recommendation');
+            if (storedData) {
+                let parsedData;
+
+                if (typeof storedData === 'string' && storedData.includes('```json')) {
+                    const jsonMatch = storedData.match(/```json\s*([\s\S]*?)\s*```/);
+                    if (jsonMatch && jsonMatch[1]) {
+                        parsedData = JSON.parse(jsonMatch[1].trim());
+                    }
+                } else {
+                    parsedData = JSON.parse(storedData);
+                }
+
+                if (parsedData && parsedData.header && parsedData.morningRoutine && parsedData.eveningRoutine) {
+                    setRecommendation(parsedData);
+                }
+            }
+        } catch (error) {
+            console.error("Error parsing recommendation data from localStorage:", error);
+        }
+    }, []);
 
     if (!recommendation) {
         return (
@@ -222,7 +246,7 @@ function Advice({activeSection = 'advice'}) {
                             <p className="text-sm sm:text-base lg:text-lg text-gray-700">
                                 <span className="font-semibold">Độ tuổi:</span> {recommendation.header.age}
                                 <br className="sm:hidden" />
-                                <span className="font-semibold sm:ml-2">Tình trạng:</span> {recommendation.header.condition}
+                                <span className="font-semibold sm:ml-2">| Tình trạng:</span> {recommendation.header.condition}
                             </p>
                         </div>
                     </div>

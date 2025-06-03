@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Camera, Droplets, Eye, Heart, RefreshCw, Sparkles, Star, Sun, TrendingUp} from 'lucide-react';
 
 function Analysis({activeSection = 'analysis', setActiveSection = () => {}}) {
-    const [loading, setLoading] = useState(true);
     const [loadingRecommendation, setLoadingRecommendation] = useState(false);
     let analysisResult = localStorage.getItem('analysisResult');
     analysisResult = analysisResult ? JSON.parse(analysisResult) : null;
@@ -17,27 +16,33 @@ function Analysis({activeSection = 'analysis', setActiveSection = () => {}}) {
     const pigmentation_level = analysisResult?.pigmentation_level || 3;
     const dryness_level = analysisResult?.dryness_level || 2;
 
-    useEffect(() => {
-        if (!analysisResult) {
-            alert("Không có dữ liệu phân tích. Vui lòng thử lại.");
-            setActiveSection('home');
-            return;
-        }
-        // Simulate loading
-        setTimeout(() => setLoading(false), 1000);
-    }, []);
-
     const fetchRecommendation = async () => {
         if (!analysisResult) return;
 
         setLoadingRecommendation(true);
 
-        // Simulate API call
-        setTimeout(() => {
-            // Mock successful response
-            setActiveSection('advice');
-            setLoadingRecommendation(false);
-        }, 2000);
+        try {
+            const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/recommendation/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(analysisResult),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('recommendation', data.recommendation);
+                setLoadingRecommendation(false);
+                setActiveSection('advice');
+            } else {
+                alert("Không thể lấy tư vấn chăm sóc da.");
+            }
+        } catch (error) {
+            console.error("Fetch recommendation error:", error);
+            alert("Lỗi khi kết nối tới máy chủ tư vấn.");
+        }
     };
 
     const getScoreColor = (score, maxScore) => {
@@ -63,21 +68,6 @@ function Analysis({activeSection = 'analysis', setActiveSection = () => {}}) {
         if (percentage <= 75) return 'Cần chú ý';
         return 'Cần cải thiện';
     };
-
-    const LoadingSpinner = () => (
-        <div className="flex flex-col items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-            <p className="text-lg text-gray-600">Đang tải dữ liệu phân tích...</p>
-        </div>
-    );
-
-    if (loading) {
-        return (
-            <section id="analysis" className={`fade-in container mx-auto px-3 sm:px-4 py-6 sm:py-8 ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
-                <LoadingSpinner />
-            </section>
-        );
-    }
 
     return (
         <section id="analysis"
