@@ -1,15 +1,32 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Camera, Droplets, Eye, Heart, RefreshCw, Sparkles, Star, Sun, TrendingUp} from 'lucide-react';
 
 function Analysis({activeSection = 'analysis', setActiveSection = () => {}}) {
     const [loadingRecommendation, setLoadingRecommendation] = useState(false);
-    let analysisResult = localStorage.getItem('analysisResult');
-    analysisResult = analysisResult ? JSON.parse(analysisResult) : null;
 
-    const imageUrl = analysisResult
-        ? 'https://pet-commonly-whippet.ngrok-free.app/media/overlays/' + analysisResult.uid
-        : 'https://pet-commonly-whippet.ngrok-free.app/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png';
-    // Mock data since we can't use localStorage in artifacts
+    // Mock data for analysis result
+    const mockAnalysis = {
+        uid: 'mock-uid-12345',
+        wsrs_level: 2,
+        wrinkle_evaluate: `**Tình trạng nếp nhăn:**\n\n* Có một số nếp nhăn nông ở vùng mắt và trán\n* Chưa có dấu hiệu nếp nhăn sâu rõ rệt\n* Cần dưỡng ẩm và chống nắng đầy đủ để ngăn ngừa lão hóa`,
+        pigmentation_level: 3,
+        dryness_level: 2,
+    };
+
+    const [analysisResult, setAnalysisResult] = useState(mockAnalysis);
+    const [imageUrl, setImageUrl] = useState('');
+
+    useEffect(() => {
+        let analysisResult = localStorage.getItem('analysisResult');
+        analysisResult = analysisResult ? JSON.parse(analysisResult) : null;
+
+        const imageUrl = analysisResult
+            ? 'https://pet-commonly-whippet.ngrok-free.app/media/overlays/' + analysisResult.uid
+            : 'https://pet-commonly-whippet.ngrok-free.app/media/gets/0a1e20ff-bdf0-417a-a91f-19d78c3293f9.png';
+
+        setAnalysisResult(analysisResult);
+        setImageUrl(imageUrl);
+    }, [activeSection]);
 
     const wsrs_level = analysisResult?.wsrs_level || 0;
     const wrinkle_evaluate = analysisResult?.wrinkle_evaluate || "";
@@ -33,15 +50,17 @@ function Analysis({activeSection = 'analysis', setActiveSection = () => {}}) {
             const data = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('recommendation', data.recommendation);
+                localStorage.setItem('recommendation', JSON.stringify(data.recommendation));
                 setLoadingRecommendation(false);
                 setActiveSection('advice');
             } else {
                 alert("Không thể lấy tư vấn chăm sóc da.");
+                setLoadingRecommendation(false);
             }
         } catch (error) {
             console.error("Fetch recommendation error:", error);
             alert("Lỗi khi kết nối tới máy chủ tư vấn.");
+            setLoadingRecommendation(false);
         }
     };
 

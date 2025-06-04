@@ -116,16 +116,7 @@ function Advice({activeSection = 'advice'}) {
         try {
             const storedData = localStorage.getItem('recommendation');
             if (storedData) {
-                let parsedData;
-
-                if (typeof storedData === 'string' && storedData.includes('```json')) {
-                    const jsonMatch = storedData.match(/```json\s*([\s\S]*?)\s*```/);
-                    if (jsonMatch && jsonMatch[1]) {
-                        parsedData = JSON.parse(jsonMatch[1].trim());
-                    }
-                } else {
-                    parsedData = JSON.parse(storedData);
-                }
+                const parsedData = JSON.parse(storedData);
 
                 if (parsedData && parsedData.header && parsedData.morningRoutine && parsedData.eveningRoutine) {
                     setRecommendation(parsedData);
@@ -134,7 +125,7 @@ function Advice({activeSection = 'advice'}) {
         } catch (error) {
             console.error("Error parsing recommendation data from localStorage:", error);
         }
-    }, []);
+    }, [activeSection]);
 
     if (!recommendation) {
         return (
@@ -166,11 +157,11 @@ function Advice({activeSection = 'advice'}) {
         product: item.product,
         ingredient: item.ingredient,
         purpose: item.purpose,
-        link: item.real_link,
-        image: item.real_image,
-        icon: item.icon == "Droplets" ? <Droplets className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"/> : item.icon == "Sparkles" ?
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500"/> : item.icon == "Sun" ?
-                <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500"/> : item.icon == "Moon" ?
+        link: item.link,
+        image: item.image,
+        icon: item.icon === "Droplets" ? <Droplets className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"/> : item.icon === "Sparkles" ?
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500"/> : item.icon === "Sun" ?
+                <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-500"/> : item.icon === "Moon" ?
                     <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500"/> : <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-400"/>,
     }))
 
@@ -179,11 +170,11 @@ function Advice({activeSection = 'advice'}) {
         product: item.product,
         ingredient: item.ingredient,
         purpose: item.purpose,
-        link: item.real_link,
-        image: item.real_image,
-        icon: item.icon == "Droplets" ? <Droplets className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"/> : item.icon == "Sparkles" ?
-            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500"/> : item.icon == "Moon" ?
-                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500"/> : item.icon == "Shield" ?
+        link: item.link,
+        image: item.image,
+        icon: item.icon === "Droplets" ? <Droplets className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500"/> : item.icon === "Sparkles" ?
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500"/> : item.icon === "Moon" ?
+                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-500"/> : item.icon === "Shield" ?
                     <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-green-500"/> : <Heart className="w-4 h-4 sm:w-5 sm:h-5 text-red-400"/>,
     }));
 
@@ -222,8 +213,7 @@ function Advice({activeSection = 'advice'}) {
                                 <p className="text-xs sm:text-sm text-gray-600">{item.purpose}</p>
                             </div>
                             <div className="flex-shrink-0">
-                                <img src={item.image} alt={item.product}
-                                     className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-sm object-cover"/>
+                                <img src={item.image} alt={item.product} className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-sm object-cover"/>
                             </div>
                         </div>
                     </div>

@@ -552,24 +552,12 @@ function Home({ activeSection, setActiveSection }) {
             </div>
 
             {/* CSS for portrait mode */}
-            <style jsx>{`
-                .vertical-camera-container {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    overflow: hidden;
-                }
-
+            <style jsx="true">{`
                 @media (max-width: 768px) {
                     .vertical-camera-container video {
                         max-height: 70vh;
                     }
-
-                    .action-buttons {
-                        flex-wrap: wrap;
-                        gap: 8px;
-                    }
-
+                    
                     .action-buttons button {
                         min-width: 120px;
                     }
