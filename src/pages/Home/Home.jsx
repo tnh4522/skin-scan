@@ -327,40 +327,73 @@ function Home({ activeSection, setActiveSection }) {
             className={`fade-in container mx-auto px-4 ${activeSection === 'home' ? 'block' : 'hidden'}`}
         >
             <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold text-blue-900">CHẨN ĐOÁN DA LÃO HÓA</h1>
-                <p className="text-gray-600 mb-2">Ứng dụng công nghệ AI phân tích da hàng đầu</p>
+                {/* Enhanced header with gradient and animation */}
+                <div className="mb-8 animate-fade-in">
+                    <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
+                        CHẨN ĐOÁN DA LÃO HÓA
+                    </h1>
+                    <p className="text-gray-600 text-lg flex items-center justify-center gap-2">
+                        <span className="inline-block w-8 h-[2px] bg-gradient-to-r from-blue-400 to-purple-400"></span>
+                        Ứng dụng công nghệ AI phân tích da hàng đầu
+                        <span className="inline-block w-8 h-[2px] bg-gradient-to-r from-purple-400 to-blue-400"></span>
+                    </p>
+                </div>
 
-                {/* ---------------- User info form ---------------- */}
+                {/* ---------------- User info form with enhanced styling ---------------- */}
                 {(!isCameraOpen && !userInfoComplete && !uploadedImage) && (
-                    <div className="mb-8 max-w-md mx-auto bg-white p-6 rounded-xl shadow-md">
-                        <h2 className="text-xl font-semibold mb-4 text-center">Thông tin người dùng</h2>
-                        <label className="block text-left mb-2 font-medium">Độ tuổi</label>
-                        <input
-                            type="number"
-                            min="1"
-                            max="120"
-                            value={age}
-                            onChange={e => setAge(e.target.value)}
-                            className="w-full border rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="Nhập tuổi của bạn"
-                        />
-                        <label className="block text-left mb-2 font-medium">Giới tính</label>
-                        <select
-                            value={gender}
-                            onChange={e => setGender(e.target.value)}
-                            className="w-full border rounded-lg p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        >
-                            <option value="" disabled>Chọn giới tính</option>
-                            <option value="male">Nam</option>
-                            <option value="female">Nữ</option>
-                            <option value="other">Khác</option>
-                        </select>
-                        <p className="text-sm text-gray-500 text-left">Thông tin này sẽ được sử dụng để cá nhân hoá kết
-                            quả phân tích.</p>
+                    <div className="mb-8 max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform transition-all hover:shadow-2xl">
+                        <div className="flex items-center justify-center mb-6">
+                            <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-full">
+                                <i className="fas fa-user-circle text-4xl text-blue-600"></i>
+                            </div>
+                        </div>
+                        <h2 className="text-2xl font-bold mb-6 text-gray-800">Thông tin người dùng</h2>
+
+                        <div className="space-y-5">
+                            <div className="text-left">
+                                <label className="block mb-2 font-semibold text-gray-700 flex items-center gap-2">
+                                    <i className="fas fa-calendar-alt text-blue-500"></i>
+                                    Độ tuổi
+                                </label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="120"
+                                    value={age}
+                                    onChange={e => setAge(e.target.value)}
+                                    className="w-full border-2 border-gray-200 rounded-xl p-3 focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100 transition-all"
+                                    placeholder="Nhập tuổi của bạn"
+                                />
+                            </div>
+
+                            <div className="text-left">
+                                <label className="block mb-2 font-semibold text-gray-700 flex items-center gap-2">
+                                    <i className="fas fa-venus-mars text-purple-500"></i>
+                                    Giới tính
+                                </label>
+                                <select
+                                    value={gender}
+                                    onChange={e => setGender(e.target.value)}
+                                    className="w-full border-2 border-gray-200 rounded-xl p-3 focus:outline-none focus:border-purple-400 focus:ring-4 focus:ring-purple-100 transition-all cursor-pointer"
+                                >
+                                    <option value="" disabled>Chọn giới tính</option>
+                                    <option value="male">Nam</option>
+                                    <option value="female">Nữ</option>
+                                    <option value="other">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl">
+                            <p className="text-sm text-gray-600 flex items-start gap-2">
+                                <i className="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                                <span>Thông tin này sẽ được sử dụng để cá nhân hoá kết quả phân tích của bạn.</span>
+                            </p>
+                        </div>
                     </div>
                 )}
 
-                {/* ---------------- Camera preview ---------------- */}
+                {/* ---------------- Camera preview with enhanced styling ---------------- */}
                 <div
                     ref={videoContainerRef}
                     className="relative max-w-sm mx-auto"
@@ -374,34 +407,64 @@ function Home({ activeSection, setActiveSection }) {
                         backgroundRepeat: 'no-repeat',
                     }}
                 >
+                    {/* Enhanced Modal */}
                     <Modal
-                        title={<p><ExclamationCircleFilled/> LƯU Ý KHI SOI DA </p>}
+                        title={
+                            <div className="flex items-center gap-2 text-lg font-bold text-orange-600">
+                                <ExclamationCircleFilled className="text-2xl"/>
+                                LƯU Ý KHI SOI DA
+                            </div>
+                        }
                         closable={{'aria-label': 'Custom Close Button'}}
                         open={isModalOpen}
                         onOk={handleOk}
                         onCancel={handleCancel}
                         footer={[
-                            <Button key="ok" onClick={handleCancel}>
+                            <Button
+                                key="ok"
+                                onClick={handleCancel}
+                                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white border-0 hover:from-blue-600 hover:to-purple-600 px-6"
+                            >
                                 Xác Nhận
                             </Button>
                         ]}
+                        className="custom-modal"
                     >
-                        <ul className="list-disc pl-5">
-                            <li>Để có kết quả chính xác nhất, vui lòng giữ camera ở khoảng cách 30-50cm và nhìn thẳng vào camera.</li>
-                            <li>Không gian xung quanh nên đủ sáng và không có ánh sáng chói.</li>
-                            <li>Cởi bỏ kính mắt, mun, hoặc các vật cản khác trên mặt.</li>
-                            <li>Giữ tóc gọn gàng, không che mặt.</li>
-                            <li>Không nên có người khác trong khung hình.</li>
-                            <li>Không nên có ánh sáng mạnh phía sau.</li>
+                        <ul className="space-y-3">
+                            <li className="flex items-start gap-2">
+                                <i className="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Để có kết quả chính xác nhất, vui lòng giữ camera ở khoảng cách 30-50cm và nhìn thẳng vào camera.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <i className="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Không gian xung quanh nên đủ sáng và không có ánh sáng chói.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <i className="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Cởi bỏ kính mắt, mun, hoặc các vật cản khác trên mặt.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <i className="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Giữ tóc gọn gàng, không che mặt.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <i className="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Không nên có người khác trong khung hình.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <i className="fas fa-check-circle text-green-500 mt-1"></i>
+                                <span>Không nên có ánh sáng mạnh phía sau.</span>
+                            </li>
                         </ul>
                     </Modal>
+
                     <div className="vertical-camera-container">
                         <video
                             ref={videoRef}
                             autoPlay
                             playsInline
                             muted
-                            className="rounded-xl shadow-lg border-4 border-white"
+                            className="rounded-2xl shadow-2xl border-4 border-white"
                             style={{
                                 width: dimensions.width > 0 ? dimensions.width : '100%',
                                 height: dimensions.height > 0 ? dimensions.height : 'auto',
@@ -416,14 +479,16 @@ function Home({ activeSection, setActiveSection }) {
                         />
                     </div>
 
-                    {/* Face detection guide overlay */}
+                    {/* Enhanced face detection guide overlay */}
                     <div
                         className="absolute inset-0 pointer-events-none flex items-center justify-center"
                         style={{display: isCameraOpen ? 'flex' : 'none'}}
                     >
                         <div
-                            className={`opacity-50 border-8 ${
-                                faceDetected ? 'border-green-500' : 'border-white border-dashed'
+                            className={`transition-all duration-300 border-4 ${
+                                faceDetected
+                                    ? 'border-green-400 shadow-lg shadow-green-400/50 animate-pulse'
+                                    : 'border-white border-dashed opacity-70'
                             }`}
                             style={{
                                 width: '60%',
@@ -431,21 +496,34 @@ function Home({ activeSection, setActiveSection }) {
                                 borderRadius: '50%',
                             }}
                         />
+                        {/* Face detection status indicator */}
+                        <div className={`absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-white text-sm font-semibold ${
+                            faceDetected ? 'bg-green-500' : 'bg-gray-500'
+                        }`}>
+                            {faceDetected ? 'Đã phát hiện khuôn mặt' : 'Đang tìm khuôn mặt...'}
+                        </div>
                     </div>
                 </div>
 
-                {/* ---------------- Uploaded image preview ---------------- */}
+                {/* ---------------- Enhanced uploaded image preview ---------------- */}
                 {uploadedImage && (
-                    <div className="relative max-w-sm mx-auto mb-4">
-                        <img
-                            src={uploadedImage}
-                            alt="Uploaded preview"
-                            className="w-full rounded-xl shadow-lg border-4 border-white"
-                            style={{
-                                maxHeight: '65vh',
-                                objectFit: 'contain'
-                            }}
-                        />
+                    <div className="relative max-w-sm mx-auto mb-6 animate-fade-in">
+                        <div className="p-2 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl">
+                            <img
+                                src={uploadedImage}
+                                alt="Uploaded preview"
+                                className="w-full rounded-xl shadow-xl"
+                                style={{
+                                    maxHeight: '65vh',
+                                    objectFit: 'contain'
+                                }}
+                            />
+                        </div>
+                        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-lg">
+                            <span className="text-sm font-semibold text-gray-700">
+                                <i className="fas fa-image text-blue-500 mr-1"></i> Ảnh đã tải lên
+                            </span>
+                        </div>
                     </div>
                 )}
 
@@ -458,8 +536,8 @@ function Home({ activeSection, setActiveSection }) {
                     className="hidden"
                 />
 
-                {/* ---------------- Action buttons ---------------- */}
-                <div className="mt-2 flex flex-wrap justify-center gap-4 action-buttons"
+                {/* ---------------- Enhanced action buttons ---------------- */}
+                <div className="mt-6 flex flex-wrap justify-center gap-4 action-buttons"
                      style={{display: userInfoComplete ? 'flex' : 'none'}}>
 
                     {/* Camera mode buttons */}
@@ -470,18 +548,29 @@ function Home({ activeSection, setActiveSection }) {
                                     <button
                                         onClick={stopCamera}
                                         disabled={isUploading}
-                                        className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="group relative bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                                     >
-                                        <i className="fas fa-times mr-2"/>HỦY BỎ
+                                        <span className="flex items-center gap-2">
+                                            <i className="fas fa-times"/>
+                                            HỦY BỎ
+                                        </span>
                                     </button>
                                     <button
                                         {...faceDetected ? {} : {disabled: true}}
                                         onClick={takePhoto}
                                         disabled={isUploading || !faceDetected}
-                                        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="group relative bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl disabled:from-gray-400 disabled:to-gray-500"
                                     >
-                                        <i className="fas fa-camera mr-2"/>
-                                        {isUploading ? 'ĐANG XỬ LÝ...' : 'CHỤP ẢNH'}
+                                        <span className="flex items-center gap-2">
+                                            <i className={`fas ${isUploading ? 'fa-spinner fa-spin' : 'fa-camera'}`}/>
+                                            {isUploading ? 'ĐANG XỬ LÝ...' : 'CHỤP ẢNH'}
+                                        </span>
+                                        {faceDetected && !isUploading && (
+                                            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                                                <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                                            </span>
+                                        )}
                                     </button>
                                 </>
                             ) : (
@@ -489,24 +578,30 @@ function Home({ activeSection, setActiveSection }) {
                                     <button
                                         onClick={startCamera}
                                         disabled={!userInfoComplete || isUploading}
-                                        className={`px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 text-white ${
+                                        className={`group relative px-6 py-3 sm:px-8 sm:py-4 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl ${
                                             userInfoComplete && !isUploading
-                                                ? 'bg-red-500 hover:bg-red-600'
-                                                : 'bg-red-300 cursor-not-allowed'
+                                                ? 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
+                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         }`}
                                     >
-                                        <i className="fas fa-camera mr-2"/>BẮT ĐẦU SOI DA
+                                        <span className="flex items-center gap-2">
+                                            <i className="fas fa-camera"/>
+                                            BẮT ĐẦU SOI DA
+                                        </span>
                                     </button>
                                     <button
                                         onClick={triggerFileUpload}
                                         disabled={!userInfoComplete || isUploading}
-                                        className={`px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 text-white ${
+                                        className={`group relative px-6 py-3 sm:px-8 sm:py-4 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl ${
                                             userInfoComplete && !isUploading
-                                                ? 'bg-blue-500 hover:bg-blue-600'
-                                                : 'bg-blue-300 cursor-not-allowed'
+                                                ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
+                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         }`}
                                     >
-                                        <i className="fas fa-upload mr-2"/>TẢI ẢNH LÊN
+                                        <span className="flex items-center gap-2">
+                                            <i className="fas fa-upload"/>
+                                            TẢI ẢNH LÊN
+                                        </span>
                                     </button>
                                 </>
                             )}
@@ -519,48 +614,170 @@ function Home({ activeSection, setActiveSection }) {
                             <button
                                 onClick={removeUploadedImage}
                                 disabled={isUploading}
-                                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="group relative bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                             >
-                                <i className="fas fa-times mr-2"/>HỦY BỎ
+                                <span className="flex items-center gap-2">
+                                    <i className="fas fa-times"/>
+                                    HỦY BỎ
+                                </span>
                             </button>
                             <button
                                 onClick={uploadPhoto}
                                 disabled={isUploading}
-                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="group relative bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                             >
-                                <i className="fas fa-search mr-2"/>
-                                {isUploading ? 'ĐANG PHÂN TÍCH...' : 'PHÂN TÍCH DA'}
+                                <span className="flex items-center gap-2">
+                                    <i className={`fas ${isUploading ? 'fa-spinner fa-spin' : 'fa-search'}`}/>
+                                    {isUploading ? 'ĐANG PHÂN TÍCH...' : 'PHÂN TÍCH DA'}
+                                </span>
                             </button>
                             <button
                                 onClick={triggerFileUpload}
                                 disabled={isUploading}
-                                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="group relative bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full text-sm sm:text-lg font-bold transform transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                             >
-                                <i className="fas fa-exchange-alt mr-2"/>ĐỔI ẢNH KHÁC
+                                <span className="flex items-center gap-2">
+                                    <i className="fas fa-exchange-alt"/>
+                                    ĐỔI ẢNH KHÁC
+                                </span>
                             </button>
                         </>
                     )}
                 </div>
 
-                {/* Loading indicator */}
+                {/* Enhanced loading indicator */}
                 {isUploading && (
-                    <div className="mt-4 flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                        <span className="ml-2 text-blue-600">Đang xử lý ảnh...</span>
+                    <div className="mt-8 flex flex-col items-center justify-center animate-fade-in">
+                        <div className="relative">
+                            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
+                            <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-blue-500 border-r-transparent border-b-transparent border-l-transparent absolute top-0 left-0"></div>
+                        </div>
+                        <div className="mt-4 text-center">
+                            <p className="text-lg font-semibold text-gray-700">Đang xử lý ảnh...</p>
+                            <p className="text-sm text-gray-500 mt-1">Vui lòng đợi trong giây lát</p>
+                        </div>
                     </div>
                 )}
             </div>
 
-            {/* CSS for portrait mode */}
+            {/* Enhanced CSS for portrait mode and animations */}
             <style jsx="true">{`
+                @keyframes fade-in {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .animate-fade-in {
+                    animation: fade-in 0.5s ease-out;
+                }
+
                 @media (max-width: 768px) {
                     .vertical-camera-container video {
                         max-height: 70vh;
                     }
-                    
+
                     .action-buttons button {
                         min-width: 120px;
                     }
+                }
+
+                /* Custom modal styling */
+                .custom-modal .ant-modal-content {
+                    border-radius: 16px;
+                    overflow: hidden;
+                }
+
+                .custom-modal .ant-modal-header {
+                    background: linear-gradient(to right, #FEF3C7, #FDE68A);
+                    border-bottom: 2px solid #F59E0B;
+                    padding: 20px 24px;
+                }
+
+                .custom-modal .ant-modal-body {
+                    padding: 24px;
+                }
+
+                /* Button hover effects */
+                button {
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                button::before {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 0;
+                    height: 0;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.2);
+                    transform: translate(-50%, -50%);
+                    transition: width 0.6s, height 0.6s;
+                }
+
+                button:hover::before {
+                    width: 300px;
+                    height: 300px;
+                }
+
+                /* Gradient text animation */
+                @keyframes gradient-shift {
+                    0% {
+                        background-position: 0% 50%;
+                    }
+                    50% {
+                        background-position: 100% 50%;
+                    }
+                    100% {
+                        background-position: 0% 50%;
+                    }
+                }
+
+                .bg-gradient-to-r {
+                    background-size: 200% 200%;
+                    animation: gradient-shift 3s ease infinite;
+                }
+
+                /* Pulse animation for face detection */
+                @keyframes pulse-border {
+                    0% {
+                        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+                    }
+                    70% {
+                        box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+                    }
+                    100% {
+                        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+                    }
+                }
+
+                .animate-pulse {
+                    animation: pulse-border 2s infinite;
+                }
+
+                /* Input focus effects */
+                input:focus, select:focus {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+                }
+
+                /* Card hover effect */
+                .transform:hover {
+                    transform: translateY(-4px);
+                }
+
+                /* Smooth transitions */
+                * {
+                    transition-property: all;
+                    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                    transition-duration: 150ms;
                 }
             `}</style>
         </section>
