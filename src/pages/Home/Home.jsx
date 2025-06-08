@@ -5,7 +5,7 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 
 /**
  * Home component – allows the user to enter age & gender, then start an AI‑powered skin scan.
- * Modified version with vertical camera frame, photo upload functionality, and audio guide.
+ * Modified version with vertical camera frame and photo upload functionality.
  */
 function Home({ activeSection, setActiveSection }) {
     /* ------------------------------------------------------------------
@@ -30,11 +30,6 @@ function Home({ activeSection, setActiveSection }) {
     const [age, setAge] = useState('');           // User‑supplied age
     const [gender, setGender] = useState('');     // "male" | "female" | "other"
 
-    // Add audio states
-    const [isAudioPlaying, setIsAudioPlaying] = useState(false);
-    const [audioLoaded, setAudioLoaded] = useState(false);
-    const [audioError, setAudioError] = useState(false);
-
     // Add state for camera dimensions
     const [dimensions, setDimensions] = useState({width: 0, height: 0});
 
@@ -42,67 +37,11 @@ function Home({ activeSection, setActiveSection }) {
     const canvasRef = useRef(null);
     const videoContainerRef = useRef(null);
     const fileInputRef = useRef(null);
-    const audioRef = useRef(null);
 
     /* ------------------------------------------------------------------
      *  Helpers
      * ----------------------------------------------------------------*/
     const userInfoComplete = age !== '' && gender !== '';
-
-    /* ------------------------------------------------------------------
-     *  Audio handling
-     * ----------------------------------------------------------------*/
-    useEffect(() => {
-        // Initialize audio
-        const audio = new Audio('/huongdan.mp3');
-        audioRef.current = audio;
-
-        const handleCanPlayThrough = () => {
-            setAudioLoaded(true);
-            setAudioError(false);
-        };
-
-        const handleError = () => {
-            setAudioError(true);
-            setAudioLoaded(false);
-            console.error('Không thể tải file audio hướng dẫn');
-        };
-
-        const handleEnded = () => {
-            setIsAudioPlaying(false);
-        };
-
-        audio.addEventListener('canplaythrough', handleCanPlayThrough);
-        audio.addEventListener('error', handleError);
-        audio.addEventListener('ended', handleEnded);
-
-        // Cleanup
-        return () => {
-            audio.removeEventListener('canplaythrough', handleCanPlayThrough);
-            audio.removeEventListener('error', handleError);
-            audio.removeEventListener('ended', handleEnded);
-            audio.pause();
-            audio.src = '';
-        };
-    }, []);
-
-    const toggleAudio = () => {
-        if (!audioRef.current || !audioLoaded) return;
-
-        if (isAudioPlaying) {
-            audioRef.current.pause();
-            setIsAudioPlaying(false);
-        } else {
-            audioRef.current.play()
-                .then(() => {
-                    setIsAudioPlaying(true);
-                })
-                .catch((error) => {
-                    console.error('Lỗi khi phát audio:', error);
-                    setAudioError(true);
-                });
-        }
-    };
 
     /* ------------------------------------------------------------------
      *  Side‑effects – camera stream handling
@@ -183,18 +122,6 @@ function Home({ activeSection, setActiveSection }) {
         try {
             // Clear uploaded image when starting camera
             setUploadedImage(null);
-
-            // Auto play audio guide when starting camera
-            if (audioRef.current && audioLoaded && !audioError) {
-                try {
-                    await audioRef.current.play();
-                    setIsAudioPlaying(true);
-                } catch (audioPlayError) {
-                    console.log('Không thể tự động phát audio:', audioPlayError);
-                    // Audio autoplay might be blocked by browser, that's okay
-                }
-            }
-
             showModal();
 
             // Attempt to request portrait orientation for mobile devices
@@ -230,12 +157,6 @@ function Home({ activeSection, setActiveSection }) {
             mediaStream.getTracks().forEach(track => track.stop());
             setMediaStream(null);
             setIsCameraOpen(false);
-
-            // Stop audio when stopping camera
-            if (audioRef.current && isAudioPlaying) {
-                audioRef.current.pause();
-                setIsAudioPlaying(false);
-            }
 
             // Release orientation lock if it was set
             if (window.screen && window.screen.orientation && window.screen.orientation.unlock) {
@@ -520,7 +441,7 @@ function Home({ activeSection, setActiveSection }) {
                             </li>
                             <li className="flex items-start gap-2">
                                 <i className="fas fa-check-circle text-green-500 mt-1"></i>
-                                <span>Cởi bỏ kính mắt, mũ, hoặc các vật cản khác trên mặt.</span>
+                                <span>Cởi bỏ kính mắt, mun, hoặc các vật cản khác trên mặt.</span>
                             </li>
                             <li className="flex items-start gap-2">
                                 <i className="fas fa-check-circle text-green-500 mt-1"></i>
@@ -535,50 +456,6 @@ function Home({ activeSection, setActiveSection }) {
                                 <span>Không nên có ánh sáng mạnh phía sau.</span>
                             </li>
                         </ul>
-
-                        {/* Audio guide in modal */}
-                        <div className="mt-4 pt-4 border-t border-gray-200">
-                            <div className="flex items-center justify-center">
-                                <button
-                                    onClick={toggleAudio}
-                                    disabled={!audioLoaded || audioError}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                                        audioLoaded && !audioError
-                                            ? isAudioPlaying
-                                                ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                                                : 'bg-green-100 text-green-700 hover:bg-green-200'
-                                            : 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                                    }`}
-                                >
-                                    <i className={`fas ${
-                                        audioError
-                                            ? 'fa-exclamation-triangle'
-                                            : isAudioPlaying
-                                                ? 'fa-volume-up animate-pulse'
-                                                : audioLoaded
-                                                    ? 'fa-play'
-                                                    : 'fa-spinner fa-spin'
-                                    }`}/>
-                                    <span className="text-sm">
-                                        {audioError
-                                            ? 'Lỗi tải audio'
-                                            : isAudioPlaying
-                                                ? 'Đang phát...'
-                                                : audioLoaded
-                                                    ? 'Nghe hướng dẫn'
-                                                    : 'Đang tải...'
-                                        }
-                                    </span>
-                                    {isAudioPlaying && (
-                                        <div className="flex items-center gap-1 ml-1">
-                                            <div className="w-0.5 h-2 bg-red-600 rounded animate-pulse"></div>
-                                            <div className="w-0.5 h-3 bg-red-600 rounded animate-pulse" style={{animationDelay: '0.1s'}}></div>
-                                            <div className="w-0.5 h-1.5 bg-red-600 rounded animate-pulse" style={{animationDelay: '0.2s'}}></div>
-                                        </div>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
                     </Modal>
 
                     <div className="vertical-camera-container">
@@ -901,20 +778,6 @@ function Home({ activeSection, setActiveSection }) {
                     transition-property: all;
                     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
                     transition-duration: 150ms;
-                }
-
-                /* Audio button animations */
-                .audio-playing {
-                    animation: audio-pulse 1s ease-in-out infinite alternate;
-                }
-
-                @keyframes audio-pulse {
-                    from {
-                        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-                    }
-                    to {
-                        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
-                    }
                 }
             `}</style>
         </section>

@@ -7,6 +7,12 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        watch: {
+            ignored: ['**/node_modules/**', '**/dist/**']
+        },
+        build: {
+            chunkSizeWarningLimit: 1000
+        },
         allowedHosts: [
             'included-sheepdog-slowly.ngrok-free.app',
         ],
