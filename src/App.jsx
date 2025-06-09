@@ -5,6 +5,7 @@ import History from './pages/History/History';
 import Analysis from './pages/Analysis/Analysis';
 import Advice from './pages/Advice/Advice';
 import Footer from './components/Footer/Footer.jsx';
+import Test from './pages/Test/Test.jsx';
 
 function App() {
     const [activeSection, setActiveSection] = useState('home');
@@ -16,6 +17,7 @@ function App() {
             <History activeSection={activeSection} />
             <Analysis activeSection={activeSection} setActiveSection={setActiveSection} />
             <Advice activeSection={activeSection} />
+            <Test activeSection={activeSection} />
         </div>
     );
 }
