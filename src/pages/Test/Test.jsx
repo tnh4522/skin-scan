@@ -48,6 +48,7 @@ function Test({ activeSection = 'test' }) {
             const zipContent = await zip.loadAsync(arrayBuffer);
 
             const extractedFiles = [];
+            const fileIndex = []; // Index of all saved files
 
             // Process each file in the ZIP
             for (const [filename, file] of Object.entries(zipContent.files)) {
@@ -57,13 +58,75 @@ function Test({ activeSection = 'test' }) {
                         filename.toLowerCase().match(/\.(jpg|jpeg|png|gif)$/i) ? 'image/' + filename.split('.').pop() :
                             'application/octet-stream';
 
-                    extractedFiles.push({
+                    // Convert blob to base64 for localStorage
+                    const base64Content = await blobToBase64(content);
+
+                    const fileData = {
                         name: filename,
                         type: fileType,
                         content: content,
-                        url: URL.createObjectURL(content)
-                    });
+                        url: URL.createObjectURL(content),
+                        size: content.size,
+                        lastModified: new Date().toISOString()
+                    };
+
+                    extractedFiles.push(fileData);
+
+                    // Save each file to localStorage with unique key
+                    const fileKey = `extracted_file_${sanitizeFilename(filename)}`;
+                    const fileMetadata = {
+                        name: filename,
+                        type: fileType,
+                        size: content.size,
+                        lastModified: fileData.lastModified,
+                        contentBase64: base64Content,
+                        originalKey: fileKey
+                    };
+
+                    try {
+                        localStorage.setItem(fileKey, JSON.stringify(fileMetadata));
+                        fileIndex.push({
+                            filename: filename,
+                            key: fileKey,
+                            size: content.size,
+                            type: fileType,
+                            lastModified: fileData.lastModified
+                        });
+                        console.log(`✅ Saved file: ${filename} to localStorage`);
+                    } catch (storageError) {
+                        console.warn(`⚠️ Could not save ${filename} to localStorage:`, storageError.message);
+                        // Handle quota exceeded or other localStorage errors
+                        if (storageError.name === 'QuotaExceededError') {
+                            // Try to clear some old files
+                            clearOldExtractedFiles();
+                            // Retry saving
+                            try {
+                                localStorage.setItem(fileKey, JSON.stringify(fileMetadata));
+                                fileIndex.push({
+                                    filename: filename,
+                                    key: fileKey,
+                                    size: content.size,
+                                    type: fileType,
+                                    lastModified: fileData.lastModified
+                                });
+                            } catch (retryError) {
+                                console.error(`❌ Failed to save ${filename} even after cleanup:`, retryError.message);
+                            }
+                        }
+                    }
                 }
+            }
+
+            // Save file index to localStorage
+            try {
+                localStorage.setItem('extracted_files_index', JSON.stringify({
+                    files: fileIndex,
+                    extractedAt: new Date().toISOString(),
+                    totalFiles: fileIndex.length,
+                    zipUrl: zipUrl
+                }));
+            } catch (error) {
+                console.warn('Could not save file index to localStorage:', error.message);
             }
 
             setExtractedFiles(extractedFiles);
@@ -75,17 +138,213 @@ function Test({ activeSection = 'test' }) {
                 const text = await jsonFile.content.text();
                 const analysisData = JSON.parse(text);
                 setAnalysisResults(analysisData);
-                localStorage.setItem('analysis_results', JSON.stringify(analysisData));
+
+                // Save analysis results separately
+                try {
+                    localStorage.setItem('analysis_results', JSON.stringify(analysisData));
+                    localStorage.setItem('analysis_results_metadata', JSON.stringify({
+                        savedAt: new Date().toISOString(),
+                        sourceFile: jsonFile.name,
+                        dataKeys: Object.keys(analysisData)
+                    }));
+                } catch (error) {
+                    console.warn('Could not save analysis results to localStorage:', error.message);
+                }
             }
 
-            setUploadStatus('✅ ZIP file downloaded and extracted successfully!');
-            return extractedFiles;
+            setUploadStatus(`✅ ZIP file downloaded, extracted and saved! (${fileIndex.length} files)`);
+
+            return {
+                extractedFiles,
+                savedCount: fileIndex.length,
+                totalFiles: extractedFiles.length,
+                fileIndex: fileIndex
+            };
 
         } catch (error) {
             console.error('Error downloading/extracting ZIP:', error);
             setUploadStatus(`❌ Error processing ZIP file: ${error.message}`);
             return null;
         }
+    };
+
+// Helper function to convert blob to base64
+    const blobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    };
+
+// Helper function to sanitize filename for localStorage key
+    const sanitizeFilename = (filename) => {
+        return filename.replace(/[^a-zA-Z0-9._-]/g, '_');
+    };
+
+// Helper function to convert base64 back to blob
+    const base64ToBlob = (base64, type) => {
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        return new Blob([byteArray], {type});
+    };
+
+// Function to retrieve a specific file from localStorage
+    const getFileFromLocalStorage = (filename) => {
+        try {
+            const fileKey = `extracted_file_${sanitizeFilename(filename)}`;
+            const storedData = localStorage.getItem(fileKey);
+
+            if (!storedData) {
+                return null;
+            }
+
+            const fileMetadata = JSON.parse(storedData);
+            const blob = base64ToBlob(fileMetadata.contentBase64, fileMetadata.type);
+
+            return {
+                name: fileMetadata.name,
+                type: fileMetadata.type,
+                content: blob,
+                url: URL.createObjectURL(blob),
+                size: fileMetadata.size,
+                lastModified: fileMetadata.lastModified
+            };
+        } catch (error) {
+            console.error(`Error retrieving file ${filename} from localStorage:`, error);
+            return null;
+        }
+    };
+
+// Function to get all extracted files from localStorage
+    const getAllExtractedFiles = () => {
+        try {
+            const indexData = localStorage.getItem('extracted_files_index');
+            if (!indexData) {
+                return [];
+            }
+
+            const index = JSON.parse(indexData);
+            const files = [];
+
+            for (const fileInfo of index.files) {
+                const file = getFileFromLocalStorage(fileInfo.filename);
+                if (file) {
+                    files.push(file);
+                }
+            }
+
+            return files;
+        } catch (error) {
+            console.error('Error retrieving all files from localStorage:', error);
+            return [];
+        }
+    };
+
+// Function to clear old extracted files (for quota management)
+    const clearOldExtractedFiles = () => {
+        try {
+            const keys = Object.keys(localStorage);
+            const extractedFileKeys = keys.filter(key => key.startsWith('extracted_file_'));
+
+            // Remove oldest files (you might want to implement smarter logic)
+            const keysToRemove = extractedFileKeys.slice(0, Math.floor(extractedFileKeys.length / 2));
+
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+
+            console.log(`Cleared ${keysToRemove.length} old files from localStorage`);
+        } catch (error) {
+            console.error('Error clearing old files:', error);
+        }
+    };
+
+// Function to delete a specific file from localStorage
+    const deleteFileFromLocalStorage = (filename) => {
+        try {
+            const fileKey = `extracted_file_${sanitizeFilename(filename)}`;
+            localStorage.removeItem(fileKey);
+
+            // Update file index
+            const indexData = localStorage.getItem('extracted_files_index');
+            if (indexData) {
+                const index = JSON.parse(indexData);
+                index.files = index.files.filter(file => file.filename !== filename);
+                localStorage.setItem('extracted_files_index', JSON.stringify(index));
+            }
+
+            return true;
+        } catch (error) {
+            console.error(`Error deleting file ${filename} from localStorage:`, error);
+            return false;
+        }
+    };
+
+// Function to clear all extracted files
+    const clearAllExtractedFiles = () => {
+        try {
+            const keys = Object.keys(localStorage);
+            const extractedKeys = keys.filter(key =>
+                key.startsWith('extracted_file_') ||
+                key === 'extracted_files_index' ||
+                key === 'analysis_results' ||
+                key === 'analysis_results_metadata'
+            );
+
+            extractedKeys.forEach(key => localStorage.removeItem(key));
+            console.log(`Cleared ${extractedKeys.length} items from localStorage`);
+            return true;
+        } catch (error) {
+            console.error('Error clearing extracted files:', error);
+            return false;
+        }
+    };
+
+// Function to get localStorage usage info
+    const getStorageInfo = () => {
+        try {
+            let totalSize = 0;
+            let extractedFilesSize = 0;
+            let extractedFilesCount = 0;
+
+            for (let key in localStorage) {
+                if (localStorage.hasOwnProperty(key)) {
+                    const itemSize = localStorage.getItem(key).length;
+                    totalSize += itemSize;
+
+                    if (key.startsWith('extracted_file_')) {
+                        extractedFilesSize += itemSize;
+                        extractedFilesCount++;
+                    }
+                }
+            }
+
+            return {
+                totalSize: totalSize,
+                extractedFilesSize: extractedFilesSize,
+                extractedFilesCount: extractedFilesCount,
+                totalSizeFormatted: formatBytes(totalSize),
+                extractedFilesSizeFormatted: formatBytes(extractedFilesSize)
+            };
+        } catch (error) {
+            console.error('Error getting storage info:', error);
+            return null;
+        }
+    };
+
+// Helper function to format bytes
+    const formatBytes = (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
     const handleTestClick = async () => {
@@ -227,7 +486,7 @@ function Test({ activeSection = 'test' }) {
                         localStorage.setItem('task_id', task_id);
 
                         // Automatically get results after task creation
-                        setTimeout(() => getResults(access_token, task_id), 280);
+                        setTimeout(() => getResults(access_token, task_id), 290);
                     }
 
                 } else {
@@ -271,6 +530,10 @@ function Test({ activeSection = 'test' }) {
                 const data = await response.json();
                 console.log('Skin Analysis Results:', data);
                 setUploadStatus('✅ Results fetched successfully!');
+                if (data.result.status === "running") {
+                    setTimeout(() => getResults(access_token, task_id), 1000);
+                }
+
                 localStorage.setItem('skin_analysis_results', JSON.stringify(data.result));
 
                 const results = data.result.results;

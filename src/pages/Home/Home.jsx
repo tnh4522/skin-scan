@@ -263,19 +263,19 @@ function Home({ activeSection, setActiveSection }) {
         try {
             stopCamera();
             setIsUploading(true);
-            const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
+            const wrinkle = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({image_base64: dataUrl, age: parseInt(age, 10), gender})
             });
-            if (!response.ok) throw new Error('Không thể tải ảnh lên server');
+            if (!wrinkle.ok) throw new Error('Không thể tải ảnh lên server');
 
-            const result = await response.json();
+            const wrinkle_result = await wrinkle.json();
 
             // Use React state instead of localStorage
-            if (result.status === 200) {
+            if (wrinkle_result.status === 200) {
                 localStorage.removeItem('analysisResult');
-                localStorage.setItem('analysisResult', JSON.stringify(result));
+                localStorage.setItem('analysisResult', JSON.stringify(wrinkle_result));
                 setActiveSection('analysis');
             }
         } catch (error) {
