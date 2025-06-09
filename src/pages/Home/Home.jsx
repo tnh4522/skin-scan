@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import * as faceapi from 'face-api.js';
 import {Button, Modal} from "antd";
 import { ExclamationCircleFilled } from '@ant-design/icons';
-
+import analyzeSkinHelper from "./Helper.js";
 /**
  * Home component – allows the user to enter age & gender, then start an AI‑powered skin scan.
  * Modified version with vertical camera frame and photo upload functionality.
@@ -259,7 +259,7 @@ function Home({ activeSection, setActiveSection }) {
         tmp.height = videoRef.current.videoHeight;
         tmp.getContext('2d').drawImage(videoRef.current, 0, 0);
         const dataUrl = tmp.toDataURL('image/png');
-
+        localStorage.setItem('originalImage', dataUrl);
         try {
             stopCamera();
             setIsUploading(true);
@@ -268,6 +268,11 @@ function Home({ activeSection, setActiveSection }) {
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({image_base64: dataUrl, age: parseInt(age, 10), gender})
             });
+
+            // analyzeSkinHelper(dataUrl).then((result) => {
+            //
+            // });
+
             if (!wrinkle.ok) throw new Error('Không thể tải ảnh lên server');
 
             const wrinkle_result = await wrinkle.json();
@@ -288,7 +293,7 @@ function Home({ activeSection, setActiveSection }) {
 
     const uploadPhoto = async () => {
         if (!uploadedImage) return;
-
+        localStorage.setItem('originalImage', uploadedImage);
         try {
             setIsUploading(true);
             const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
