@@ -223,25 +223,8 @@ function Advice({activeSection = 'advice'}) {
     );
 
     return (
-        <section id="advice"
-                 className={`fade-in container mx-auto px-3 sm:px-4 py-6 sm:py-8 max-w-6xl ${activeSection === 'advice' ? 'block' : 'hidden'}`}>
+        <section id="advice" className={`fade-in container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl ${activeSection === 'advice' ? 'block' : 'hidden'}`}>
             <div className="mx-auto">
-                <div className="text-center mb-6 sm:mb-8">
-                    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-8 mb-4 sm:mb-6">
-                        <div className="flex items-center justify-center mb-3 sm:mb-4">
-                            <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-red-500 mr-2 sm:mr-3"/>
-                            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">TƯ VẤN CHĂM SÓC DA</h1>
-                        </div>
-                        <div className="bg-gradient-to-r from-red-100 to-pink-100 rounded-lg p-3 sm:p-4">
-                            <p className="text-sm sm:text-base lg:text-lg text-gray-700">
-                                <span className="font-semibold">Độ tuổi:</span> {recommendation.header.age}
-                                <br className="sm:hidden" />
-                                <span className="font-semibold sm:ml-2">| Tình trạng:</span> {recommendation.header.condition}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
                 <div className="mb-6 sm:mb-8">
                     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                         <div

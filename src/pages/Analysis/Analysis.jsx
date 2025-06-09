@@ -283,116 +283,108 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
 
     return (
         <section id="analysis" className={`fade-in container mx-auto px-3 sm:px-4 py-3 sm:py-8 max-w-6xl ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
-
-            {/* Header Section */}
-            <div className="text-center mb-4 sm:mb-8">
-                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-4 sm:p-6 text-white shadow-xl">
-                    <div className="flex items-center justify-center mb-3 sm:mb-4">
-                        <Camera className="w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3"/>
-                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">KẾT QUẢ PHÂN TÍCH DA</h1>
-                    </div>
-                    <p className="text-sm sm:text-base opacity-90">Phân tích chi tiết tình trạng làn da của bạn</p>
-                </div>
-            </div>
-
             {/* Image Analysis Carousel */}
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6 sm:mb-8">
-                {slides.length > 0 && (
-                    <div className="relative">
-                        {/* Main Carousel Container */}
-                        <div className="relative h-72 sm:h-80 md:h-96 lg:h-[28rem] xl:h-[32rem] overflow-hidden bg-gray-100">
-                            {/* Image Display */}
-                            <div className="relative w-full h-full flex items-center justify-center">
-                                {/* Original Image (Always visible as base) */}
-                                <img
-                                    src={slides[0]?.image}
-                                    alt="Original skin image"
-                                    className="max-w-full max-h-full object-contain z-10"
-                                    style={{display: 'block'}}
-                                />
+            <div className={`bg-white rounded-2xl shadow-xl overflow-hidden mb-6 sm:mb-8 ${
+                currentSlide === 0 ? 'border-2 border-t-4 border-b-4 border-red-500' : currentSlide === 1 ? 'border-2 border-t-4 border-b-4 border-green-500' : currentSlide === 2 ? 'border-2 border-t-4 border-b-4 border-blue-500' : currentSlide === 3 ? 'border-2 border-t-4 border-b-4 border-yellow-500' : 'border-2 border-gray-300'
+            }`}>
+                <div className="relative">
+                    {/* Main Carousel Container */}
+                    <div
+                        className="relative h-72 sm:h-80 md:h-96 lg:h-[28rem] xl:h-[32rem] overflow-hidden bg-gray-100">
+                        {/* Image Display */}
+                        <div className="relative w-full h-full flex items-center justify-center">
+                            {/* Original Image (Always visible as base) */}
+                            <img
+                                src={slides[0]?.image}
+                                alt="Original skin image"
+                                className="max-w-full max-h-full object-contain z-10"
+                                style={{display: 'block'}}
+                            />
 
-                                {/* Overlay Image (Only when not on original slide and overlay is on) */}
-                                {currentSlide > 0 && (
-                                    <div className="absolute inset-0 w-full h-full flex items-center justify-center">
-                                        <img
-                                            src={slides[currentSlide]?.image}
-                                            alt={slides[currentSlide]?.title}
-                                            className="max-w-full max-h-full object-contain mix-blend-multiply opacity-90 z-20"
-                                            style={{display: 'block'}}
-                                        />
+                            {/* Overlay Image (Only when not on original slide and overlay is on) */}
+                            {currentSlide > 0 && (
+                                <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+                                    <img
+                                        src={slides[currentSlide]?.image}
+                                        alt={slides[currentSlide]?.title}
+                                        className="max-w-full max-h-full object-contain mix-blend-multiply opacity-90 z-20"
+                                        style={{display: 'block'}}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Slide Info Bar */}
+                    <div className={`bg-gradient-to-r ${slides[currentSlide]?.color} p-4 sm:p-6`}>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                {slides[currentSlide]?.icon && (
+                                    <div className="bg-white/20 p-2 rounded-lg">
+                                        {React.createElement(slides[currentSlide].icon, {
+                                            className: "w-5 h-5 sm:w-6 sm:h-6 text-white"
+                                        })}
                                     </div>
                                 )}
-                            </div>
-                        </div>
-
-                        {/* Slide Info Bar */}
-                        <div className={`bg-gradient-to-r ${slides[currentSlide]?.color} p-4 sm:p-6`}>
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                    {slides[currentSlide]?.icon && (
-                                        <div className="bg-white/20 p-2 rounded-lg">
-                                            {React.createElement(slides[currentSlide].icon, {
-                                                className: "w-5 h-5 sm:w-6 sm:h-6 text-white"
-                                            })}
-                                        </div>
-                                    )}
-                                    <div>
-                                        <h3 className="text-white font-bold text-base sm:text-lg">
-                                            {slides[currentSlide]?.title}
-                                        </h3>
-                                        <p className="text-white/80 text-xs sm:text-sm">
-                                            {slides[currentSlide]?.description}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="text-white text-sm font-medium">
-                                    {currentSlide + 1} / {slides.length}
+                                <div>
+                                    <h3 className="text-white font-bold text-base sm:text-lg">
+                                        {slides[currentSlide]?.title}
+                                    </h3>
+                                    <p className="text-white/80 text-xs sm:text-sm">
+                                        {slides[currentSlide]?.description}
+                                    </p>
                                 </div>
                             </div>
-                        </div>
-
-                        {/* Thumbnails */}
-                        <div className="bg-gray-50 p-4 flex gap-2 justify-center items-center overflow-x-auto scrollbar-hide">
-                            {slides.map((slide, index) => {
-                                const IconComponent = getSlideIcon(slide.id);
-
-                                const getMainColor = (colorClass) => {
-                                    if (colorClass.includes('blue')) return 'blue';
-                                    if (colorClass.includes('red')) return 'red';
-                                    if (colorClass.includes('yellow') || colorClass.includes('orange')) return 'orange';
-                                    if (colorClass.includes('green') || colorClass.includes('teal')) return 'green';
-                                    return 'blue';
-                                };
-
-                                const mainColor = getMainColor(slide.color);
-
-                                return <button
-                                    key={slide.id}
-                                    onClick={() => setCurrentSlide(index)}
-                                    className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 transition-all duration-100 flex flex-col items-center justify-center gap-1 focus:outline-none ${
-                                        currentSlide === index ?
-                                            `border-${mainColor}-600 bg-${mainColor}-50` :
-                                            `border-${mainColor}-300 bg-white hover:bg-${mainColor}-50`
-                                    }`}
-                                >
-                                    {/* Icon của từng slide */}
-                                    <IconComponent className={`w-10 h-10 ${currentSlide === index ? `text-${mainColor}-600` : `text-${mainColor}-300`}`} />
-
-                                    {/* Label ngắn gọn */}
-                                    <span className={`text-xs font-medium text-center leading-tight text-${mainColor}-600`}>
-                                        {slide.id === 'original' ? 'Gốc' : slide.id === 'wrinkle' ? 'Nhăn' : slide.id === 'age_spot' ? 'Đốm' : slide.id === 'oiliness' ? 'Ẩm' : slide.title.split(' ')[0]}
-                                    </span>
-                                </button>
-                            })}
+                            <div className="text-white text-sm font-medium">
+                                {currentSlide + 1} / {slides.length}
+                            </div>
                         </div>
                     </div>
-                )}
+
+                    {/* Thumbnails */}
+                    <div
+                        className="bg-gray-50 p-4 flex gap-2 justify-center items-center overflow-x-auto scrollbar-hide">
+                        {slides.map((slide, index) => {
+                            const IconComponent = getSlideIcon(slide.id);
+
+                            const getMainColor = (colorClass) => {
+                                if (colorClass.includes('blue')) return 'blue';
+                                if (colorClass.includes('red')) return 'red';
+                                if (colorClass.includes('yellow') || colorClass.includes('orange')) return 'orange';
+                                if (colorClass.includes('green') || colorClass.includes('teal')) return 'green';
+                                return 'blue';
+                            };
+
+                            const mainColor = getMainColor(slide.color);
+
+                            return <button
+                                key={slide.id}
+                                onClick={() => setCurrentSlide(index)}
+                                className={`flex-shrink-0 w-20 h-20 rounded-lg border-2 transition-all duration-100 flex flex-col items-center justify-center gap-1 focus:outline-none ${
+                                    currentSlide === index ?
+                                        `border-${mainColor}-600 bg-${mainColor}-50` :
+                                        `border-${mainColor}-300 bg-white hover:bg-${mainColor}-50`
+                                }`}
+                            >
+                                {/* Icon của từng slide */}
+                                <IconComponent
+                                    className={`w-10 h-10 ${currentSlide === index ? `text-${mainColor}-600` : `text-${mainColor}-300`}`}/>
+
+                                {/* Label ngắn gọn */}
+                                <span className={`text-xs font-medium text-center leading-tight text-${mainColor}-600`}>
+                                        {slide.id === 'original' ? 'Gốc' : slide.id === 'wrinkle' ? 'Nhăn' : slide.id === 'age_spot' ? 'Đốm' : slide.id === 'oiliness' ? 'Ẩm' : slide.title.split(' ')[0]}
+                                    </span>
+                            </button>
+                        })}
+                    </div>
+                </div>
 
                 {/* Loading state */}
                 {slides.length === 0 && (
                     <div className="h-72 sm:h-80 md:h-96 bg-gray-100 flex items-center justify-center">
                         <div className="text-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                            <div
+                                className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
                             <p className="text-gray-600">Đang tải hình ảnh phân tích...</p>
                         </div>
                     </div>
@@ -421,7 +413,8 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                 >
                     {loadingRecommendation ? (
                         <>
-                            <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div>
+                            <div
+                                className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div>
                             Đang tư vấn...
                         </>
                     ) : (

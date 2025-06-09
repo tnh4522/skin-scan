@@ -327,23 +327,8 @@ function Home({ activeSection, setActiveSection }) {
      *  Render
      * ----------------------------------------------------------------*/
     return (
-        <section
-            id="home"
-            className={`fade-in container mx-auto px-4 ${activeSection === 'home' ? 'block' : 'hidden'}`}
-        >
+        <section id="home" className={`fade-in container mx-auto px-4 py-4 ${activeSection === 'home' ? 'block' : 'hidden'}`}>
             <div className="text-center mb-8">
-                {/* Enhanced header with gradient and animation */}
-                <div className="mb-8 animate-fade-in">
-                    <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3">
-                        CHẨN ĐOÁN DA LÃO HÓA
-                    </h1>
-                    <p className="text-gray-600 text-lg flex items-center justify-center gap-2">
-                        <span className="inline-block w-8 h-[2px] bg-gradient-to-r from-blue-400 to-purple-400"></span>
-                        Ứng dụng công nghệ AI phân tích da hàng đầu
-                        <span className="inline-block w-8 h-[2px] bg-gradient-to-r from-purple-400 to-blue-400"></span>
-                    </p>
-                </div>
-
                 {/* ---------------- User info form with enhanced styling ---------------- */}
                 {(!isCameraOpen && !userInfoComplete && !uploadedImage) && (
                     <div className="mb-8 max-w-md mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform transition-all hover:shadow-2xl">
