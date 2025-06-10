@@ -119,7 +119,7 @@ const analyzeSkinHelper = async (dataUrl) => {
                                     "hd_age_spot",
                                     "hd_wrinkle",
                                     "hd_texture",
-                                    "hd_oiliness"
+                                    "hd_moisture"
                                 ]
                             }
                         ]

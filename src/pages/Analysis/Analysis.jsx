@@ -25,8 +25,8 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
         const imageUrl = localStorage.getItem('originalImage');
         let age_spot_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_age_spot_output.png');
         age_spot_output = age_spot_output ? JSON.parse(age_spot_output) : null;
-        let oiliness_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_oiliness_output.png');
-        oiliness_output = oiliness_output ? JSON.parse(oiliness_output) : null;
+        let moisture_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_moisture_output.png');
+        moisture_output = moisture_output ? JSON.parse(moisture_output) : null;
         let wrinkle_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_wrinkle_output_all.png');
         wrinkle_output = wrinkle_output ? JSON.parse(wrinkle_output) : null;
 
@@ -67,12 +67,12 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
             });
         }
 
-        if (oiliness_output && oiliness_output.contentBase64) {
+        if (moisture_output && moisture_output.contentBase64) {
             slidesArray.push({
-                id: 'oiliness',
-                title: 'Phân tích độ khô ẩm',
-                description: 'Hiển thị các vùng da dầu và khô',
-                image: `data:image/png;base64,${oiliness_output.contentBase64}`,
+                id: 'moisture',
+                title: 'Phân tích độ ẩm',
+                description: 'Hiển thị các vùng có độ ẩm khác nhau trên da',
+                image: `data:image/png;base64,${moisture_output.contentBase64}`,
                 color: 'from-yellow-500 to-orange-600',
                 icon: Droplets
             });
@@ -196,11 +196,11 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                 </p>
             </div>
         } else if (currentSlide == 3) {
-            const Oiliness = CustomIcons.Oiliness;
+            const Moisture = CustomIcons.Moisture;
             return <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border-t-4 border-orange-500 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 md:col-span-2 lg:col-span-1">
                 <div className="flex items-center mb-3 sm:mb-4">
                     <div className="bg-orange-100 p-2 sm:p-3 rounded-full mr-3">
-                        <Oiliness className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600"/>
+                        <Moisture className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600"/>
                     </div>
                     <div>
                         <h3 className="text-base sm:text-lg font-bold text-orange-800">Độ Khô Da</h3>
@@ -259,7 +259,7 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
             </svg>
         ),
 
-        Oiliness: ({className}) => (
+        Moisture: ({className}) => (
             <svg className={className} viewBox="0 0 24 24" fill="currentColor">
                 <path
                     d="M12 2.5c-1.5 2-3.5 4-3.5 7.5 0 3.5 2.5 6 5.5 6s5.5-2.5 5.5-6c0-3.5-2-5.5-3.5-7.5l-2-2.5-2 2.5z"/>
@@ -274,8 +274,8 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                 return CustomIcons.Wrinkles;
             case 'age_spot':
                 return CustomIcons.AgeSpots;
-            case 'oiliness':
-                return CustomIcons.Oiliness;
+            case 'moisture':
+                return CustomIcons.Moisture;
             default:
                 return Camera; // Icon mặc định cho original image
         }
@@ -372,7 +372,7 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
 
                                 {/* Label ngắn gọn */}
                                 <span className={`text-xs font-medium text-center leading-tight text-${mainColor}-600`}>
-                                        {slide.id === 'original' ? 'Gốc' : slide.id === 'wrinkle' ? 'Nhăn' : slide.id === 'age_spot' ? 'Đốm' : slide.id === 'oiliness' ? 'Ẩm' : slide.title.split(' ')[0]}
+                                        {slide.id === 'original' ? 'Gốc' : slide.id === 'wrinkle' ? 'Nhăn' : slide.id === 'age_spot' ? 'Đốm' : slide.id === 'moisture' ? 'Ẩm' : slide.title.split(' ')[0]}
                                     </span>
                             </button>
                         })}

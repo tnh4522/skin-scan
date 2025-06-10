@@ -462,7 +462,7 @@ function Test({ activeSection = 'test' }) {
                                         "hd_age_spot",
                                         "hd_wrinkle",
                                         "hd_texture",
-                                        "hd_oiliness"
+                                        "hd_moisture"
                                     ]
                                 }
                             ]
