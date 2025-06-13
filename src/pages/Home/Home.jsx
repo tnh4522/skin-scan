@@ -263,7 +263,7 @@ function Home({ activeSection, setActiveSection }) {
         try {
             stopCamera();
             setIsUploading(true);
-            const wrinkle = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
+            const wrinkle = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/analysis/', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({image_base64: dataUrl, age: parseInt(age, 10), gender})
@@ -296,7 +296,7 @@ function Home({ activeSection, setActiveSection }) {
         localStorage.setItem('originalImage', uploadedImage);
         try {
             setIsUploading(true);
-            const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/detect/', {
+            const response = await fetch('https://pet-commonly-whippet.ngrok-free.app/api/analysis/', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({

@@ -81,8 +81,8 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
         setSlides(slidesArray);
     }, [activeSection]);
 
-    const wsrs_level = analysisResult?.wsrs_level || 0;
-    const wrinkle_evaluate = analysisResult?.wrinkle_evaluate || "";
+    const wsrs_level = analysisResult?.wrinkle?.wsrs_level || 0;
+    const wrinkle_evaluate = analysisResult?.wrinkle?.wrinkle_evaluate || "";
     const pigmentation_level = analysisResult?.pigmentation_level || 3;
     const dryness_level = analysisResult?.dryness_level || 2;
 
@@ -277,7 +277,7 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
             case 'moisture':
                 return CustomIcons.Moisture;
             default:
-                return Camera; // Icon mặc định cho original image
+                return Camera;
         }
     };
 
@@ -285,7 +285,7 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
         <section id="analysis" className={`fade-in container mx-auto px-3 sm:px-4 py-3 sm:py-8 max-w-6xl ${activeSection === 'analysis' ? 'block' : 'hidden'}`}>
             {/* Image Analysis Carousel */}
             <div className={`bg-white rounded-2xl shadow-xl overflow-hidden mb-6 sm:mb-8 ${
-                currentSlide === 0 ? 'border-2 border-t-4 border-b-4 border-red-500' : currentSlide === 1 ? 'border-2 border-t-4 border-b-4 border-green-500' : currentSlide === 2 ? 'border-2 border-t-4 border-b-4 border-blue-500' : currentSlide === 3 ? 'border-2 border-t-4 border-b-4 border-yellow-500' : 'border-2 border-gray-300'
+                currentSlide === 0 ? 'border-2 border-t-4 border-b-4 border-red-500' : currentSlide === 1 ? 'border-2 border-t-4 border-b-4 border-green-500' : currentSlide === 2 ? 'border-2 border-t-4 border-b-4 border-blue-500' : currentSlide === 3 ? 'border-2 border-t-4 border-b-4 border-orange-500' : 'border-2 border-gray-300'
             }`}>
                 <div className="relative">
                     {/* Main Carousel Container */}
