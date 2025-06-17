@@ -486,12 +486,6 @@ function Home({ activeSection, setActiveSection }) {
                                 borderRadius: '50%',
                             }}
                         />
-                        {/* Face detection status indicator */}
-                        <div className={`absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full text-white text-sm font-semibold ${
-                            faceDetected ? 'bg-green-500' : 'bg-gray-500'
-                        }`}>
-                            {faceDetected ? 'Đã phát hiện khuôn mặt' : 'Đang tìm khuôn mặt...'}
-                        </div>
                     </div>
                 </div>
 

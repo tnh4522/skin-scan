@@ -289,8 +289,7 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
             }`}>
                 <div className="relative">
                     {/* Main Carousel Container */}
-                    <div
-                        className="relative h-72 sm:h-80 md:h-96 lg:h-[28rem] xl:h-[32rem] overflow-hidden bg-gray-100">
+                    <div className="relative h-72 sm:h-80 md:h-96 lg:h-[28rem] xl:h-[32rem] overflow-hidden bg-gray-100">
                         {/* Image Display */}
                         <div className="relative w-full h-full flex items-center justify-center">
                             {/* Original Image (Always visible as base) */}
@@ -310,6 +309,22 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                                         className="max-w-full max-h-full object-contain mix-blend-multiply opacity-90 z-20"
                                         style={{display: 'block'}}
                                     />
+                                </div>
+                            )}
+
+                            {currentSlide === 3 && (
+                                <div style={{
+                                        position: 'absolute',
+                                        top: '1.5rem',
+                                        right: '1.5rem',
+                                        zIndex: 50,
+                                    }}
+                                >
+                                    <div className="text-white text-xs text-center font-medium drop-shadow-lg flex flex-col items-center">
+                                        <div className="mb-1 bg-black/30 px-1 rounded">Khô</div>
+                                        <div className="relative w-6 h-32 bg-gradient-to-t from-red-500 via-yellow-500 to-blue-500 rounded-full shadow-lg border-2 border-white/50"></div>
+                                        <div className="mt-1 bg-black/30 px-1 rounded">Ẩm</div>
+                                    </div>
                                 </div>
                             )}
                         </div>

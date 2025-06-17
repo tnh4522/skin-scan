@@ -66,7 +66,7 @@ function Navigation({ activeSection, setActiveSection }) {
                         </div>
 
                         <span className="text-l font-bold bg-gradient-to-r from-blue-700 to-blue-900 bg-clip-text text-transparent">
-                            {activeSection == 'home' ? 'PHÂN TÍCH DA MẶT' : activeSection == 'analysis' ? 'KẾT QUẢ PHÂN TÍCH VÀ ĐÁNH GIÁ' : activeSection == 'advice' ? 'ĐỀ XUẤT GIẢI PHÁP CHĂM SÓC DA' : 'Test'}
+                            {activeSection == 'home' ? 'PHÂN TÍCH DA MẶT' : activeSection == 'analysis' ? 'KẾT QUẢ PHÂN TÍCH VÀ ĐÁNH GIÁ' : activeSection == 'advice' ? 'ĐỀ XUẤT SẢN PHẨM CHĂM SÓC DA' : 'Test'}
                         </span>
 
                         {/* Navigation Menu */}
