@@ -24,11 +24,17 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
         // Load images
         const imageUrl = localStorage.getItem('originalImage');
         let age_spot_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_age_spot_output.png');
+        let task_id = analysisResult.skin_analysis.task_id;
+        let uuid = analysisResult.wrinkle.id;
+        let age_spot_output_url = 'https://pet-commonly-whippet.ngrok-free.app/media/skin_analysis_results/' + task_id + '/skinanalysisResult/hd_age_spot_output.png';
         age_spot_output = age_spot_output ? JSON.parse(age_spot_output) : null;
         let moisture_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_moisture_output.png');
+        let moisture_output_url = 'https://pet-commonly-whippet.ngrok-free.app/media/skin_analysis_results/' + task_id + '/skinanalysisResult/hd_moisture_output.png';
         moisture_output = moisture_output ? JSON.parse(moisture_output) : null;
         let wrinkle_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_wrinkle_output_all.png');
         wrinkle_output = wrinkle_output ? JSON.parse(wrinkle_output) : null;
+        // let wrinkle_output_url = 'https://pet-commonly-whippet.ngrok-free.app/media/overlays/' + uuid + '.png';
+        let wrinkle_output_url = 'https://pet-commonly-whippet.ngrok-free.app/media/skin_analysis_results/' + task_id + '/skinanalysisResult/hd_wrinkle_output_all.png';
 
         // Set analysis result
         setAnalysisResult(analysisResult || mockAnalysis);
@@ -51,6 +57,7 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                 title: 'Phân tích nếp nhăn',
                 description: 'Hiển thị các vùng có nếp nhăn và mức độ lão hóa',
                 image: `data:image/png;base64,${wrinkle_output.contentBase64}`,
+                imageUrl: wrinkle_output_url,
                 color: 'from-green-500 to-teal-600',
                 icon: Eye
             });
@@ -62,6 +69,7 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                 title: 'Phân tích đốm sắc tố',
                 description: 'Hiển thị các đốm nâu và vùng có sắc tố bất thường',
                 image: `data:image/png;base64,${age_spot_output.contentBase64}`,
+                imageUrl: age_spot_output_url,
                 color: 'from-blue-500 to-teal-600',
                 icon: Sun
             });
@@ -73,6 +81,7 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                 title: 'Phân tích độ ẩm',
                 description: 'Hiển thị các vùng có độ ẩm khác nhau trên da',
                 image: `data:image/png;base64,${moisture_output.contentBase64}`,
+                imageUrl: moisture_output_url,
                 color: 'from-yellow-500 to-orange-600',
                 icon: Droplets
             });
@@ -83,8 +92,10 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
 
     const wsrs_level = analysisResult?.wrinkle?.wsrs_level || 0;
     const wrinkle_evaluate = analysisResult?.wrinkle?.wrinkle_evaluate || "";
-    const pigmentation_level = analysisResult?.pigmentation_level || 3;
-    const dryness_level = analysisResult?.dryness_level || 2;
+    const pigmentation_level = analysisResult?.pigmentation_level || 0;
+    const dryness_level = analysisResult?.moisture_level || 0;
+    const pigment_evaluate = analysisResult.evaluate_text?.pigment_evaluate || "";
+    const moisture_evaluate = analysisResult.evaluate_text?.moisture_evaluate || "";
 
     const fetchRecommendation = async () => {
         if (!analysisResult) return;
@@ -172,15 +183,16 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
             </div>
         } else if (currentSlide == 2) {
             const Pigmentation = CustomIcons.AgeSpots;
-            return <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border-t-4 border-blue-500 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            return <div
+                className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border-t-4 border-blue-500 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="flex items-center mb-3 sm:mb-4">
                     <div className="bg-blue-100 p-2 sm:p-3 rounded-full mr-3">
                         <Pigmentation className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600"/>
                     </div>
                     <div>
                         <h3 className="text-base sm:text-lg font-bold text-blue-800">Đốm Sắc Tố</h3>
-                        <p className={`text-sm font-semibold ${getScoreColorText(pigmentation_level, 5)}`}>
-                            {pigmentation_level}/5 - {getScoreText(pigmentation_level, 5)}
+                        <p className={`text-sm font-semibold ${getScoreColorText(pigmentation_level, 4)}`}>
+                            {pigmentation_level}/4 - {getScoreText(pigmentation_level, 4)}
                         </p>
                     </div>
                 </div>
@@ -191,21 +203,26 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                     ></div>
                 </div>
 
-                <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-                    Da có dấu hiệu đốm nâu nhẹ, chủ yếu do tác động của tia UV. Cần sử dụng kem chống nắng và sản phẩm làm sáng da.
-                </p>
+                <p className="text-xs sm:text-sm text-gray-700 formatted-content"
+                    dangerouslySetInnerHTML={{
+                        __html: pigment_evaluate
+                            .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-blue-600">$1</strong>')
+                            .replace(/\* ([^*]+?)(?=\s*\*|$)/g, '<div class="flex items-start mb-2"><span class="text-blue-500 mr-2 text-xs">•</span><span class="text-xs">$1</span></div>')
+                    }}
+                />
             </div>
         } else if (currentSlide == 3) {
             const Moisture = CustomIcons.Moisture;
-            return <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border-t-4 border-orange-500 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 md:col-span-2 lg:col-span-1">
+            return <div
+                className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl border-t-4 border-orange-500 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 md:col-span-2 lg:col-span-1">
                 <div className="flex items-center mb-3 sm:mb-4">
                     <div className="bg-orange-100 p-2 sm:p-3 rounded-full mr-3">
                         <Moisture className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600"/>
                     </div>
                     <div>
                         <h3 className="text-base sm:text-lg font-bold text-orange-800">Độ Khô Da</h3>
-                        <p className={`text-sm font-semibold ${getScoreColorText(dryness_level, 5)}`}>
-                            {dryness_level}/5 - {getScoreText(dryness_level, 5)}
+                        <p className={`text-sm font-semibold ${getScoreColorText(dryness_level, 4)}`}>
+                            {dryness_level}/4 - {getScoreText(dryness_level, 4)}
                         </p>
                     </div>
                 </div>
@@ -217,8 +234,12 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                     ></div>
                 </div>
 
-                <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">
-                    Da có dấu hiệu khô nhẹ, cần bổ sung độ ẩm thường xuyên. Sử dụng serum hyaluronic acid và kem dưỡng ẩm.
+                <p className="text-xs sm:text-sm text-gray-700 formatted-content"
+                   dangerouslySetInnerHTML={{
+                       __html: moisture_evaluate
+                           .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-orange-600">$1</strong>')
+                           .replace(/\* ([^*]+?)(?=\s*\*|$)/g, '<div class="flex items-start mb-2"><span class="text-orange-500 mr-2 text-xs">•</span><span class="text-xs">$1</span></div>')
+                   }}>
                 </p>
             </div>
         } else {
@@ -301,10 +322,10 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                             />
 
                             {/* Overlay Image (Only when not on original slide and overlay is on) */}
-                            {currentSlide > 0 && (
+                            {(currentSlide > 0) && (
                                 <div className="absolute inset-0 w-full h-full flex items-center justify-center">
                                     <img
-                                        src={slides[currentSlide]?.image}
+                                        src={slides[currentSlide]?.imageUrl}
                                         alt={slides[currentSlide]?.title}
                                         className="max-w-full max-h-full object-contain mix-blend-multiply opacity-90 z-20"
                                         style={{display: 'block'}}
@@ -312,21 +333,6 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
                                 </div>
                             )}
 
-                            {currentSlide === 3 && (
-                                <div style={{
-                                        position: 'absolute',
-                                        top: '1.5rem',
-                                        right: '1.5rem',
-                                        zIndex: 50,
-                                    }}
-                                >
-                                    <div className="text-white text-xs text-center font-medium drop-shadow-lg flex flex-col items-center">
-                                        <div className="mb-1 bg-black/30 px-1 rounded">Khô</div>
-                                        <div className="relative w-6 h-32 bg-gradient-to-t from-red-500 via-yellow-500 to-blue-500 rounded-full shadow-lg border-2 border-white/50"></div>
-                                        <div className="mt-1 bg-black/30 px-1 rounded">Ẩm</div>
-                                    </div>
-                                </div>
-                            )}
                         </div>
                     </div>
 
