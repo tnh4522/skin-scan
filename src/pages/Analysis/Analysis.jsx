@@ -24,8 +24,8 @@ function Analysis({ activeSection = 'analysis', setActiveSection = () => {} }) {
         // Load images
         const imageUrl = localStorage.getItem('originalImage');
         let age_spot_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_age_spot_output.png');
-        let task_id = analysisResult.skin_analysis.task_id ?? 0;
-        let uuid = analysisResult.wrinkle.id;
+        let task_id = analysisResult?.skin_analysis?.task_id ?? 0;
+        let uuid = analysisResult?.wrinkle?.id ?? null;
         let age_spot_output_url = 'https://pet-commonly-whippet.ngrok-free.app/media/skin_analysis_results/' + task_id + '/skinanalysisResult/hd_age_spot_output.png';
         age_spot_output = age_spot_output ? JSON.parse(age_spot_output) : null;
         let moisture_output = localStorage.getItem('extracted_file_skinanalysisResult_hd_moisture_output.png');
